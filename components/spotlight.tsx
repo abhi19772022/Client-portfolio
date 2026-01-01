@@ -4,18 +4,17 @@ import { useState, useEffect, useRef } from "react"
 import type { AppWindow } from "@/types"
 
 const spotlightApps = [
-  { id: "safari", title: "Safari", icon: "/safari.png", component: "Safari" },
+  { id: "imessage", title: "Messages", icon: "/messages.png", component: "IMessage" },
   { id: "contact", title: "Contact", icon: "/mail.png", component: "Contact" },
   { id: "photos", title: "Photos", icon: "/Photos.png", component: "Photos" },
-  { id: "vscode", title: "VS Code", icon: "/vscode.png", component: "VSCode" },
+  { id: "testimonials", title: "Testimonials", icon: "/contacts.png", component: "Testimonials" },
   { id: "notes", title: "Notes", icon: "/notes.png", component: "Notes" },
-  { id: "facetime", title: "FaceTime", icon: "/facetime.png", component: "FaceTime" },
+  { id: "aftereffects", title: "After Effects", icon: "/after-effects.png", component: "AfterEffects" },
+  { id: "premiere", title: "Premiere Pro", icon: "/premiere-pro.png", component: "Premiere" },
+  { id: "davinci", title: "DaVinci Resolve", icon: "/icons8-davinci-resolve-48.png", component: "DaVinci" },
   { id: "terminal", title: "Terminal", icon: "/terminal.png", component: "Terminal" },
-  { id: "github", title: "GitHub", icon: "/github.png", component: "GitHub" },
-  { id: "youtube", title: "YouTube", icon: "/youtube.png", component: "YouTube" },
-  { id: "spotify", title: "Spotify", icon: "/spotify.png", component: "Spotify" },
-  { id: "snake", title: "Snake", icon: "/snake.png", component: "Snake" },
-  { id: "weather", title: "Weather", icon: "/weather.png", component: "Weather" },
+  { id: "files", title: "My Data", icon: "/files.png", component: "Files" },
+  { id: "music", title: "Music", icon: "/music.png", component: "Music" },
 ]
 
 interface SpotlightProps {

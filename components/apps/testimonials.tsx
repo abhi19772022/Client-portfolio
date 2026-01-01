@@ -6,38 +6,101 @@ export default function Testimonials({ isDarkMode }: { isDarkMode?: boolean }) {
   const testimonials = [
     {
       quote:
-        "Himanshu's video editing skills are exceptional. His attention to detail and creative vision transformed our content strategy completely.",
-      name: "Priya Sharma",
-      designation: "Content Director at MediaHub",
-      src: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "Exceptional video editor! Himanshu delivered outstanding content for our community events. His creativity brought our vision to life perfectly.",
+      name: "The Journey Club",
+      designation: "Creator Economy Community - 6,155 followers",
+      src: "/testimonials/testimonial-1.png",
     },
     {
       quote:
-        "Working with Himanshu was seamless. He delivered high-quality edits ahead of schedule and his communication was outstanding.",
-      name: "Rahul Verma",
-      designation: "Founder at Digital Creators",
-      src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "Working with Himanshu was a game-changer. His editing skills elevated our content quality and helped us reach new audiences.",
+      name: "Sagnik Ghosh",
+      designation: "Entrepreneur & Investor - 15.4K followers",
+      src: "/testimonials/testimonial-2.png",
     },
     {
       quote:
-        "His creative approach to storytelling through video is remarkable. Every project exceeded our expectations.",
-      name: "Ananya Desai",
-      designation: "Marketing Lead at TechVentures",
-      src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "Himanshu's expertise in video editing is remarkable. He helped us generate 7-figure results with compelling visual storytelling.",
+      name: "Jatin Naran",
+      designation: "Digital Creator - 241K followers",
+      src: "/testimonials/testimonial-3.png",
+    },                    
+    {
+      quote:
+        "His attention to detail and creative vision transformed our AI content. Professional work that exceeded expectations every time.",
+      name: "Serge Gatari",
+      designation: "AI Builder & Content Creator - 67.1K followers",
+      src: "/testimonials/testimonial-4.png",
     },
     {
       quote:
-        "Professional, creative, and incredibly talented. Himanshu brought our vision to life with his expert editing skills.",
-      name: "Arjun Kapoor",
-      designation: "YouTube Creator - 500k Subscribers",
-      src: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "Incredible editing quality! Himanshu helped create engaging reels that resonated with our 214K followers. Highly recommended!",
+      name: "Parth Vijayvergiya",
+      designation: "Reel Creator - 214K followers",
+      src: "/testimonials/testimonial-5.png",
     },
     {
       quote:
-        "The quality of work and turnaround time is exceptional. Highly recommend for any video editing project.",
-      name: "Sneha Patel",
-      designation: "Brand Manager at Creative Studios",
-      src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "As a British artist, finding quality video editors is crucial. Himanshu delivered exceptional work for our academy's promotional content.",
+      name: "Stephen Ridley",
+      designation: "British Artist & Founder - 526K followers",
+      src: "/testimonials/testimonial-6.png",
+    },
+    {
+      quote:
+        "Clear vision meets expert execution! Himanshu's editing brought clarity to our educational content and enhanced viewer engagement significantly.",
+      name: "Tharun Naik",
+      designation: "IIT Kharagpur '23 & Founder - 258K followers",
+      src: "/testimonials/testimonial-7.png",
+    },
+    {
+      quote:
+        "Outstanding work for our community events! Himanshu's editing captured the essence of our developer meetups perfectly.",
+      name: "GDG Chandigarh",
+      designation: "Google Developer Groups - 1,376 followers",
+      src: "/testimonials/testimonial-8.png",
+    },
+    {
+      quote:
+        "Professional and dedicated! Himanshu helped us create engaging AI content that resonated with our growing community.",
+      name: "AI Community Delhi",
+      designation: "AI Community - 233 followers",
+      src: "/testimonials/testimonial-9.png",
+    },
+    {
+      quote:
+        "Exceptional editing for our D4 Community content. Himanshu understood our vision and delivered beyond expectations.",
+      name: "D4 Community",
+      designation: "Discite Develop Debug Deploy - 371 followers",
+      src: "/testimonials/testimonial-10.png",
+    },
+    {
+      quote:
+        "Empowering content through great editing! Himanshu's work helped showcase our community events to 19.8K followers effectively.",
+      name: "GDG India",
+      designation: "Google Developer Groups India - 19.8K followers",
+      src: "/testimonials/testimonial-11.png",
+    },
+    {
+      quote:
+        "High-quality video editing for our machine learning events. Himanshu captured the technical excellence of our community perfectly.",
+      name: "ML Chandigarh",
+      designation: "ML Community by Google - 265 followers",
+      src: "/testimonials/testimonial-12.png",
+    },
+    {
+      quote:
+        "Partnership success! Himanshu's video editing helped us present our AI solutions with clarity and professional appeal.",
+      name: "LLMware.ai",
+      designation: "AI Technology Company",
+      src: "/testimonials/testimonial-13.png",
+    },
+    {
+      quote:
+        "Real, bold & unscripted content made better! Himanshu's editing enhanced our podcast quality and viewer engagement tremendously.",
+      name: "GUESSS India Podcast",
+      designation: "Student Entrepreneurship Podcast - 470 subscribers",
+      src: "/testimonials/testimonial-14.png",
     },
   ]
 

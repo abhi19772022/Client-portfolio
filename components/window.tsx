@@ -20,6 +20,7 @@ import Files from "@/components/apps/files"
 import DaVinci from "@/components/apps/davinci"
 import Music from "@/components/apps/music"
 import Testimonials from "@/components/apps/testimonials"
+import IMessage from "@/components/apps/imessage"
 
 
 const componentMap: Record<string, React.ComponentType<{ isDarkMode?: boolean }>> = {
@@ -38,6 +39,7 @@ const componentMap: Record<string, React.ComponentType<{ isDarkMode?: boolean }>
   DaVinci,
   Music,
   Testimonials,
+  IMessage,
 }
 
 interface WindowProps {

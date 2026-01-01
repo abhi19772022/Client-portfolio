@@ -1,7 +1,22 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronRight, Folder, FileText, Video } from "lucide-react"
+import { 
+  ChevronRight, 
+  Folder, 
+  FileText, 
+  Video, 
+  Grid3x3, 
+  List, 
+  Columns, 
+  ChevronLeft,
+  Search,
+  Star,
+  Clock,
+  Tag,
+  MoreHorizontal,
+  X
+} from "lucide-react"
 
 type FileItem = {
   id: string
@@ -10,6 +25,16 @@ type FileItem = {
   fileType?: "video" | "document" | "figma"
   link?: string
   children?: FileItem[]
+  dateModified?: string
+  size?: string
+}
+
+type ViewMode = "icon" | "list" | "column"
+
+type Tab = {
+  id: string
+  path: string[]
+  name: string
 }
 
 const fileStructure: FileItem[] = [
@@ -215,6 +240,10 @@ export default function Files() {
   const [openFolders, setOpenFolders] = useState<string[]>(["work"])
   const [breadcrumb, setBreadcrumb] = useState<string[]>(["work"])
   const [currentItems, setCurrentItems] = useState<FileItem[]>(fileStructure[0].children || [])
+  const [viewMode, setViewMode] = useState<ViewMode>("icon")
+  const [tabs, setTabs] = useState<Tab[]>([{ id: "tab-1", path: ["work"], name: "Work" }])
+  const [activeTab, setActiveTab] = useState<string>("tab-1")
+  const [searchQuery, setSearchQuery] = useState("")
 
   // Helper function to find an item by ID in the entire structure
   const findItemById = (items: FileItem[], id: string): FileItem | null => {
@@ -247,12 +276,116 @@ export default function Files() {
 
   const handleItemClick = (item: FileItem) => {
     if (item.type === "folder") {
-      setBreadcrumb([...breadcrumb, item.id])
+      const newPath = [...breadcrumb, item.id]
+      setBreadcrumb(newPath)
       setCurrentItems(item.children || [])
+      
+      // Update active tab
+      const updatedTabs = tabs.map(tab => 
+        tab.id === activeTab 
+          ? { ...tab, path: newPath, name: item.name }
+          : tab
+      )
+      setTabs(updatedTabs)
     } else if (item.link) {
       window.open(item.link, "_blank")
     }
   }
+
+  const handleBreadcrumbClick = (index: number) => {
+    const newPath = breadcrumb.slice(0, index + 1)
+    setBreadcrumb(newPath)
+    
+    // Navigate to that folder
+    let targetFolder: FileItem | null = null
+    for (const crumbId of newPath) {
+      if (!targetFolder) {
+        targetFolder = fileStructure.find(f => f.id === crumbId) || null
+      } else {
+        targetFolder = targetFolder.children?.find(f => f.id === crumbId) || null
+      }
+    }
+    
+    if (targetFolder) {
+      setCurrentItems(targetFolder.children || [])
+      const updatedTabs = tabs.map(tab =>
+        tab.id === activeTab
+          ? { ...tab, path: newPath, name: targetFolder!.name }
+          : tab
+      )
+      setTabs(updatedTabs)
+    }
+  }
+
+  const goBack = () => {
+    if (breadcrumb.length > 1) {
+      handleBreadcrumbClick(breadcrumb.length - 2)
+    }
+  }
+
+  const addNewTab = () => {
+    const newTab: Tab = {
+      id: `tab-${Date.now()}`,
+      path: ["work"],
+      name: "Work"
+    }
+    setTabs([...tabs, newTab])
+    setActiveTab(newTab.id)
+    setBreadcrumb(["work"])
+    setCurrentItems(fileStructure[0].children || [])
+  }
+
+  const closeTab = (tabId: string) => {
+    if (tabs.length === 1) return // Don't close the last tab
+    
+    const newTabs = tabs.filter(tab => tab.id !== tabId)
+    setTabs(newTabs)
+    
+    if (activeTab === tabId) {
+      const tabIndex = tabs.findIndex(tab => tab.id === tabId)
+      const newActiveTab = newTabs[Math.max(0, tabIndex - 1)]
+      setActiveTab(newActiveTab.id)
+      setBreadcrumb(newActiveTab.path)
+      
+      // Navigate to the new active tab's path
+      let targetFolder: FileItem | null = null
+      for (const crumbId of newActiveTab.path) {
+        if (!targetFolder) {
+          targetFolder = fileStructure.find(f => f.id === crumbId) || null
+        } else {
+          targetFolder = targetFolder.children?.find(f => f.id === crumbId) || null
+        }
+      }
+      if (targetFolder) {
+        setCurrentItems(targetFolder.children || [])
+      }
+    }
+  }
+
+  const switchTab = (tabId: string) => {
+    setActiveTab(tabId)
+    const tab = tabs.find(t => t.id === tabId)
+    if (tab) {
+      setBreadcrumb(tab.path)
+      
+      // Navigate to that tab's path
+      let targetFolder: FileItem | null = null
+      for (const crumbId of tab.path) {
+        if (!targetFolder) {
+          targetFolder = fileStructure.find(f => f.id === crumbId) || null
+        } else {
+          targetFolder = targetFolder.children?.find(f => f.id === crumbId) || null
+        }
+      }
+      if (targetFolder) {
+        setCurrentItems(targetFolder.children || [])
+      }
+    }
+  }
+
+  const filteredItems = currentItems.filter(item =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   const getFileIcon = (item: FileItem) => {
     if (item.type === "folder") {
@@ -367,82 +500,242 @@ export default function Files() {
   }
 
   return (
-    <div className="h-full w-full flex bg-white dark:bg-gray-900">
-      {/* Sidebar */}
-      <div className="w-52 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex flex-col">
-        {/* Sidebar Header */}
-        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-            Favorites
-          </h2>
-        </div>
-
-        {/* Sidebar Items */}
-        <div className="flex-1 overflow-y-auto py-2">
-          {fileStructure.map(item => renderSidebarItem(item))}
-        </div>
+    <div className="h-full w-full flex flex-col bg-white dark:bg-gray-900">
+      {/* Tab Bar */}
+      <div className="h-9 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center px-2 overflow-x-auto">
+        {tabs.map((tab, index) => (
+          <div
+            key={tab.id}
+            className={`group flex items-center gap-1 px-3 py-1 rounded-t-md cursor-pointer transition-colors ${
+              activeTab === tab.id
+                ? "bg-white dark:bg-gray-900 border-t border-l border-r border-gray-200 dark:border-gray-700"
+                : "bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-700"
+            }`}
+            onClick={() => switchTab(tab.id)}
+          >
+            <span className="text-xs font-medium truncate max-w-[120px]">{tab.name}</span>
+            {tabs.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  closeTab(tab.id)
+                }}
+                className="opacity-0 group-hover:opacity-100 hover:bg-gray-300 dark:hover:bg-gray-600 rounded p-0.5"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+        ))}
+        <button
+          onClick={addNewTab}
+          className="ml-1 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+          title="New Tab"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Toolbar */}
-        <div className="h-12 border-b border-gray-200 dark:border-gray-700 flex items-center px-4 bg-gray-50 dark:bg-gray-800">
-          <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-            {breadcrumb.map((crumb, index) => (
-              <div key={crumb} className="flex items-center">
-                {index > 0 && <ChevronRight className="w-4 h-4 mx-1" />}
-                <span className="capitalize">{crumb.replace(/-/g, " ")}</span>
-              </div>
-            ))}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Sidebar */}
+        <div className="w-52 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex flex-col">
+          {/* Sidebar Header */}
+          <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              Favorites
+            </h2>
+          </div>
+
+          {/* Sidebar Items */}
+          <div className="flex-1 overflow-y-auto py-2">
+            {fileStructure.map(item => renderSidebarItem(item))}
           </div>
         </div>
 
-        {/* Files Grid - Scattered Layout */}
-        <div className="flex-1 overflow-y-auto p-6 relative">
-          <div className="relative min-h-[600px]">
-            {currentItems.map((item, index) => {
-              // Create scattered positions for items
-              const positions = [
-                { top: '10%', left: '8%' },
-                { top: '15%', left: '35%' },
-                { top: '8%', left: '62%' },
-                { top: '35%', left: '12%' },
-                { top: '32%', left: '45%' },
-                { top: '38%', left: '75%' },
-                { top: '58%', left: '6%' },
-                { top: '62%', left: '38%' },
-                { top: '55%', left: '68%' },
-                { top: '78%', left: '15%' },
-                { top: '82%', left: '48%' },
-                { top: '75%', left: '80%' },
-              ]
-              const position = positions[index % positions.length]
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col">
+          {/* Toolbar */}
+          <div className="h-12 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 bg-gray-50 dark:bg-gray-800">
+            <div className="flex items-center gap-2">
+              {/* Navigation Buttons */}
+              <button
+                onClick={goBack}
+                disabled={breadcrumb.length <= 1}
+                className="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
               
-              return (
-                <div
-                  key={item.id}
-                  className="absolute flex flex-col items-center cursor-pointer group"
-                  style={{ top: position.top, left: position.left }}
-                  onClick={() => handleItemClick(item)}
+              {/* Breadcrumb */}
+              <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                {breadcrumb.map((crumb, index) => (
+                  <div key={crumb} className="flex items-center">
+                    {index > 0 && <ChevronRight className="w-3 h-3 mx-1" />}
+                    <button
+                      onClick={() => handleBreadcrumbClick(index)}
+                      className="capitalize hover:text-blue-500 transition-colors"
+                    >
+                      {crumb.replace(/-/g, " ")}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {/* Search */}
+              <div className="relative">
+                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-8 pr-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-40"
+                />
+              </div>
+
+              {/* View Mode Buttons */}
+              <div className="flex items-center gap-1 border border-gray-200 dark:border-gray-600 rounded-md p-1">
+                <button
+                  onClick={() => setViewMode("icon")}
+                  className={`p-1 rounded ${
+                    viewMode === "icon"
+                      ? "bg-blue-500 text-white"
+                      : "hover:bg-gray-200 dark:hover:bg-gray-700"
+                  }`}
+                  title="Icon View"
                 >
-                  <div className="transform transition-all duration-200 group-hover:scale-110">
-                    {getFileIcon(item)}
-                  </div>
-                  <div className="mt-2 text-center">
-                    <p className="text-sm text-gray-800 dark:text-gray-200 truncate max-w-[120px] px-2 py-1 rounded group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30">
-                      {item.name}
-                    </p>
-                  </div>
-                </div>
-              )
-            })}
+                  <Grid3x3 className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={`p-1 rounded ${
+                    viewMode === "list"
+                      ? "bg-blue-500 text-white"
+                      : "hover:bg-gray-200 dark:hover:bg-gray-700"
+                  }`}
+                  title="List View"
+                >
+                  <List className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("column")}
+                  className={`p-1 rounded ${
+                    viewMode === "column"
+                      ? "bg-blue-500 text-white"
+                      : "hover:bg-gray-200 dark:hover:bg-gray-700"
+                  }`}
+                  title="Column View"
+                >
+                  <Columns className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           </div>
 
-          {currentItems.length === 0 && (
-            <div className="flex items-center justify-center h-64">
-              <p className="text-gray-400 dark:text-gray-500">This folder is empty</p>
-            </div>
-          )}
+          {/* Files Display Area */}
+          <div className="flex-1 overflow-y-auto">
+            {viewMode === "icon" && (
+              <div className="p-6 grid grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8">
+                {filteredItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex flex-col items-center cursor-pointer group"
+                    onClick={() => handleItemClick(item)}
+                    onDoubleClick={() => handleItemClick(item)}
+                  >
+                    <div className="transform transition-all duration-200 group-hover:scale-105">
+                      {getFileIcon(item)}
+                    </div>
+                    <div className="mt-3 text-center w-full px-1">
+                      <p className="text-sm font-medium text-gray-800 dark:text-gray-200 px-2 py-1 rounded group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 break-words leading-tight">
+                        {item.name}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {viewMode === "list" && (
+              <div className="p-4">
+                <table className="w-full text-sm">
+                  <thead className="border-b border-gray-200 dark:border-gray-700">
+                    <tr className="text-left text-xs text-gray-500 dark:text-gray-400">
+                      <th className="pb-2 font-medium">Name</th>
+                      <th className="pb-2 font-medium">Type</th>
+                      <th className="pb-2 font-medium">Date Modified</th>
+                      <th className="pb-2 font-medium">Size</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredItems.map((item) => (
+                      <tr
+                        key={item.id}
+                        className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                        onClick={() => handleItemClick(item)}
+                      >
+                        <td className="py-3 flex items-center gap-2">
+                          <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                            {item.type === "folder" ? (
+                              <Folder className="w-5 h-5 text-blue-500" />
+                            ) : item.fileType === "video" ? (
+                              <Video className="w-5 h-5 text-purple-500" />
+                            ) : (
+                              <FileText className="w-5 h-5 text-gray-400" />
+                            )}
+                          </div>
+                          <span className="text-sm font-medium text-gray-800 dark:text-gray-200 break-words">{item.name}</span>
+                        </td>
+                        <td className="py-2 text-gray-600 dark:text-gray-400 capitalize">
+                          {item.type === "folder" ? "Folder" : item.fileType || "File"}
+                        </td>
+                        <td className="py-2 text-gray-600 dark:text-gray-400">
+                          {item.dateModified || "Today"}
+                        </td>
+                        <td className="py-2 text-gray-600 dark:text-gray-400">
+                          {item.type === "folder" ? "--" : item.size || "--"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {viewMode === "column" && (
+              <div className="flex h-full divide-x divide-gray-200 dark:divide-gray-700">
+                {/* Column view - simplified */}
+                <div className="w-72 overflow-y-auto border-r border-gray-200 dark:border-gray-700">
+                  {filteredItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer border-b border-gray-100 dark:border-gray-800"
+                      onClick={() => handleItemClick(item)}
+                    >
+                      {item.type === "folder" ? (
+                        <Folder className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                      ) : (
+                        <FileText className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                      )}
+                      <span className="text-sm font-medium break-words leading-tight">{item.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {filteredItems.length === 0 && (
+              <div className="flex items-center justify-center h-64">
+                <p className="text-gray-400 dark:text-gray-500">
+                  {searchQuery ? "No items found" : "This folder is empty"}
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

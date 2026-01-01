@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import Dock from "@/components/dock"
 import Menubar from "@/components/menubar"
 import Wallpaper from "@/components/wallpaper"
@@ -45,6 +45,15 @@ export default function Desktop({
   const [screenBrightness, setScreenBrightness] = useState(initialBrightness)
   const desktopRef = useRef<HTMLDivElement>(null)
   const textContainerRef = useRef<HTMLDivElement>(null)
+  const [showAboutMeVideo, setShowAboutMeVideo] = useState(false)
+  const [showSecondNote, setShowSecondNote] = useState(false)
+  const [draggingItem, setDraggingItem] = useState<string | null>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [iconPositions, setIconPositions] = useState({
+    aboutMe: { x: 32, y: 260 }, // left-8 (32px), moved further down to y: 260px
+    longForm: { x: window.innerWidth * 0.78, y: 128 }, // right-[22%] (78%), top-32 (128px)
+    shortForm: { x: window.innerWidth * 0.92, y: window.innerHeight * 0.45 }, // right-[8%], top-[45%]
+  })
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -134,25 +143,70 @@ export default function Desktop({
     }
   }
 
+  // Drag handlers for desktop icons
+  const handleDragStart = useCallback((e: React.DragEvent, itemId: string) => {
+    setDraggingItem(itemId)
+    e.dataTransfer.effectAllowed = 'move'
+  }, [])
+
+  const handleDragEnd = useCallback((e: React.DragEvent) => {
+    setDraggingItem(null)
+  }, [])
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    if (!draggingItem) return
+
+    const rect = desktopRef.current?.getBoundingClientRect()
+    if (!rect) return
+
+    const x = e.clientX - rect.left - 28 // Offset for icon center (56/2)
+    const y = e.clientY - rect.top - 28
+
+    setIconPositions(prev => ({
+      ...prev,
+      [draggingItem]: { x, y }
+    }))
+    setDraggingItem(null)
+  }, [draggingItem])
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+  }, [])
+
   return (
     <div className="relative">
       <div
         ref={desktopRef}
         className={`relative h-screen w-screen overflow-hidden ${isDarkMode ? "dark" : ""}`}
         onClick={handleDesktopClick}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
       >
         <Wallpaper isDarkMode={isDarkMode} />
 
         {/* Desktop Files and Folders */}
         <div className="absolute inset-0 pointer-events-none z-10">
-          {/* About Me Video File - Left Top */}
+          {/* About Me Video File with Click Modal */}
           <div 
-            className="absolute top-24 left-8 pointer-events-auto cursor-pointer"
-            onClick={() => {
-              window.open("https://drive.google.com/your-about-me-video-link", "_blank")
+            className="absolute pointer-events-auto cursor-move group"
+            style={{ 
+              left: `${iconPositions.aboutMe.x}px`, 
+              top: `${iconPositions.aboutMe.y}px`,
+              transition: draggingItem === 'aboutMe' ? 'none' : 'all 0.3s ease'
+            }}
+            draggable
+            onDragStart={(e) => handleDragStart(e, 'aboutMe')}
+            onDragEnd={handleDragEnd}
+            onClick={(e) => {
+              if (!draggingItem) {
+                e.stopPropagation();
+                setShowAboutMeVideo(true);
+              }
             }}
           >
-            <div className="flex flex-col items-center group hover:scale-105 transition-transform">
+            <div className="flex flex-col items-center hover:scale-105 transition-transform relative">
               <svg viewBox="0 0 64 64" className="w-14 h-14">
                 <defs>
                   <linearGradient id="videoGradientAbout" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -171,9 +225,76 @@ export default function Desktop({
             </div>
           </div>
 
+          {/* About Me Video Modal */}
+          {showAboutMeVideo && (
+            <div 
+              className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm animate-in fade-in-0 duration-200"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (videoRef.current) {
+                  videoRef.current.pause();
+                }
+                setShowAboutMeVideo(false);
+              }}
+            >
+              <div 
+                className="relative bg-gradient-to-br from-gray-900 to-black rounded-2xl shadow-2xl p-4 border-2 border-blue-500/30 animate-in zoom-in-95 duration-200"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (videoRef.current) {
+                      videoRef.current.pause();
+                      videoRef.current.currentTime = 0;
+                    }
+                    setShowAboutMeVideo(false);
+                  }}
+                  className="absolute -top-3 -right-3 z-[10000] bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-all hover:scale-110 font-bold text-lg cursor-pointer"
+                  title="Close"
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  ✕
+                </button>
+                <div className="relative">
+                  <video 
+                    ref={videoRef}
+                    autoPlay 
+                    loop
+                    playsInline
+                    controls
+                    controlsList="nodownload"
+                    className="w-[500px] h-[500px] rounded-lg object-cover bg-black"
+                    onLoadedData={() => {
+                      if (videoRef.current) {
+                        videoRef.current.play().catch(err => console.log("Video play error:", err));
+                      }
+                    }}
+                  >
+                    <source src="https://ro1maimmky.ufs.sh/f/9whXBKsZTOyPsP9ZWsmRoLvX6jdZYu7rxBql51T3aFAPQztW" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                  <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm rounded-full px-4 py-2 text-sm text-white font-medium pointer-events-none">
+                    🎬 About Me
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Long Form Videos Folder */}
           <div 
-            className="absolute top-32 right-[22%] pointer-events-auto cursor-pointer"
+            className="absolute pointer-events-auto cursor-move"
+            style={{ 
+              left: `${iconPositions.longForm.x}px`, 
+              top: `${iconPositions.longForm.y}px`,
+              transition: draggingItem === 'longForm' ? 'none' : 'all 0.3s ease'
+            }}
+            draggable
+            onDragStart={(e) => handleDragStart(e, 'longForm')}
+            onDragEnd={handleDragEnd}
             onClick={() => openApp({
               id: "files-longform",
               title: "Long Form Videos",
@@ -198,7 +319,15 @@ export default function Desktop({
 
           {/* Short Form Videos Folder */}
           <div 
-            className="absolute top-[45%] right-[8%] pointer-events-auto cursor-pointer"
+            className="absolute pointer-events-auto cursor-move"
+            style={{ 
+              left: `${iconPositions.shortForm.x}px`, 
+              top: `${iconPositions.shortForm.y}px`,
+              transition: draggingItem === 'shortForm' ? 'none' : 'all 0.3s ease'
+            }}
+            draggable
+            onDragStart={(e) => handleDragStart(e, 'shortForm')}
+            onDragEnd={handleDragEnd}
             onClick={() => openApp({
               id: "files-shortform",
               title: "Short Form Videos",
@@ -237,20 +366,56 @@ export default function Desktop({
         {/* Video Editor Widgets - Hidden but keeping code */}
         {false && <VideoEditorWidgets isDarkMode={isDarkMode} />}
 
-        {/* Sticky Note - Moved to Left Top */}
-        <div className="absolute top-24 left-[140px] z-10 hidden sm:block">
-          <div className="bg-[#FFF59D] shadow-lg rounded-sm p-2.5 md:p-3 w-48 md:w-56 font-['Marker_Felt'] transform rotate-1 hover:rotate-0 transition-transform">
-            <div className="text-[#333333] space-y-1.5">
-              <div className="font-bold text-xs md:text-sm mb-2 underline">To do:</div>
-              <div className="text-[10px] md:text-xs space-y-1 leading-snug">
-                <div>• Improve the LLX job</div>
-                <div>• Drink water</div>
-                <div>• Move to the US</div>
-                <div>• Reduce some kilos as I am eating too much</div>
-                <div>• Build that banger spotify playlist</div>
-                <div>• World domination</div>
-                <div>• Get many good at making pasta</div>
-                <div>• Travel somewhere new every year</div>
+        {/* Dual Sticky Notes - Extreme Top Left */}
+        <div className="absolute top-6 left-6 z-10 hidden sm:block perspective-1000">
+          <div className="relative">
+            {/* Second Note (Behind) - My Intro */}
+            <div 
+              className={`absolute inset-0 bg-[#FFE082] shadow-lg rounded-sm p-2.5 md:p-3 w-48 md:w-56 font-['Marker_Felt'] transform transition-all duration-700 ease-in-out ${
+                showSecondNote 
+                  ? 'rotate-0 scale-100 opacity-100 translate-x-0 translate-y-0 z-20' 
+                  : 'rotate-3 scale-98 opacity-85 translate-x-3 translate-y-3 z-0'
+              }`}
+              onClick={() => setShowSecondNote(!showSecondNote)}
+              style={{ cursor: 'pointer' }}
+            >
+              <div className="text-[#333333] space-y-1.5">
+                <div className="font-bold text-sm md:text-base mb-2 text-center underline">My Intro</div>
+                <div className="text-[10px] md:text-xs space-y-1.5 leading-relaxed">
+                  <div>👋 <strong>Hi, I'm Himashu!</strong></div>
+                  <div>🎬 Professional Video Editor</div>
+                  <div>✨ Creative Storyteller</div>
+                  <div>💼 5+ Years Experience</div>
+                  <div>🎨 DaVinci Resolve Expert</div>
+                  <div>🎵 Audio & Color Master</div>
+                  <div>📱 Social Media Specialist</div>
+                  <div>🎯 147 Projects Completed</div>
+                </div>
+              </div>
+            </div>
+
+            {/* First Note (Front) - To Do List */}
+            <div 
+              className={`relative bg-[#FFE082] shadow-xl rounded-sm p-2.5 md:p-3 w-48 md:w-56 font-['Marker_Felt'] transform transition-all duration-700 ease-in-out ${
+                showSecondNote 
+                  ? 'rotate-3 scale-98 opacity-85 -translate-x-3 -translate-y-3 z-0' 
+                  : 'rotate-1 scale-100 opacity-100 translate-x-0 translate-y-0 z-20'
+              } hover:rotate-0`}
+              onClick={() => setShowSecondNote(!showSecondNote)}
+              style={{ cursor: 'pointer' }}
+            >
+              <div className="text-[#333333] space-y-1.5">
+                <div className="font-bold text-xs md:text-sm mb-2 underline">To do:</div>
+                <div className="text-[10px] md:text-xs space-y-1 leading-snug">
+                  <div>• Improve the LLX job</div>
+                  <div>• Drink water</div>
+                  <div>• Move to the US</div>
+                  <div>• Reduce some kilos as I am eating too much</div>
+                  <div>• Build that banger spotify playlist</div>
+                  <div>• World domination</div>
+                  <div>• Get many good at making pasta</div>
+                  <div>• Travel somewhere new every year</div>
+                </div>
               </div>
             </div>
           </div>
