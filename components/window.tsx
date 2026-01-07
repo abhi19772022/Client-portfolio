@@ -22,7 +22,7 @@ import Testimonials from "@/components/apps/testimonials"
 import IMessage from "@/components/apps/imessage"
 
 
-const componentMap: Record<string, React.ComponentType<{ isDarkMode?: boolean }>> = {
+const componentMap: Record<string, React.ComponentType<{ isDarkMode?: boolean; onAppClick?: (app: any) => void }>> = {
   Notes,
   Safari,
   VSCode,
@@ -46,9 +46,10 @@ interface WindowProps {
   onClose: () => void
   onFocus: () => void
   isDarkMode: boolean
+  onAppClick?: (app: any) => void
 }
 
-export default function Window({ window, isActive, onClose, onFocus, isDarkMode }: WindowProps) {
+export default function Window({ window, isActive, onClose, onFocus, isDarkMode, onAppClick }: WindowProps) {
   const [position, setPosition] = useState(window.position)
   const [size, setSize] = useState(window.size)
   const [isDragging, setIsDragging] = useState(false)
@@ -216,17 +217,31 @@ export default function Window({ window, isActive, onClose, onFocus, isDarkMode 
   return (
     <div
       ref={windowRef}
-      className={`absolute rounded-lg overflow-hidden shadow-2xl transition-all duration-300 ease-out ${isActive ? "shadow-2xl z-10" : "shadow-lg z-0"} ${isZoomed ? "scale-100" : ""}`}
+      className={`absolute rounded-lg overflow-hidden transition-all duration-300 ease-out ${isActive ? "z-10" : "z-0"} ${isZoomed ? "scale-100" : ""}`}
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
         width: `${size.width}px`,
         height: `${size.height}px`,
+        background: 'rgba(255, 255, 255, 0)',
+        borderRadius: '16px',
+        boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+        backdropFilter: 'blur(10.9px)',
+        WebkitBackdropFilter: 'blur(10.9px)',
+        border: '1px solid rgba(255, 255, 255, 0.42)',
       }}
       onClick={onFocus}
     >
       {/* Title bar */}
-      <div className={`h-8 flex items-center px-3 ${titleBarClass}`} onMouseDown={handleTitleBarMouseDown}>
+      <div 
+        className={`h-8 flex items-center px-3 ${titleBarClass}`} 
+        style={{
+          background: isDarkMode ? 'rgba(31, 41, 55, 0.7)' : 'rgba(229, 231, 235, 0.7)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+        }}
+        onMouseDown={handleTitleBarMouseDown}
+      >
         <div className="window-controls flex items-center space-x-2 mr-4">
           <button
             className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center"
@@ -254,8 +269,15 @@ export default function Window({ window, isActive, onClose, onFocus, isDarkMode 
       </div>
 
       {/* Window content */}
-      <div className={`${contentBgClass} h-[calc(100%-2rem)] overflow-auto`}>
-        {AppComponent ? <AppComponent isDarkMode={isDarkMode} /> : <div className="p-4">Content not available</div>}
+      <div 
+        className={`h-[calc(100%-2rem)] overflow-auto`}
+        style={{
+          background: isDarkMode ? 'rgba(17, 24, 39, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+        }}
+      >
+        {AppComponent ? <AppComponent isDarkMode={isDarkMode} onAppClick={onAppClick} /> : <div className="p-4">Content not available</div>}
       </div>
 
       {/* Resize handles */}

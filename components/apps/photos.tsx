@@ -155,7 +155,14 @@ export default function Photos() {
   };
 
   return (
-    <div className="h-full w-full overflow-y-auto overflow-x-hidden bg-white dark:bg-gray-900">
+    <div 
+      className="h-full w-full overflow-y-auto overflow-x-hidden"
+      style={{
+        background: 'rgba(255, 255, 255, 0)',
+        backdropFilter: 'blur(10.9px)',
+        WebkitBackdropFilter: 'blur(10.9px)',
+      }}
+    >
       {/* macOS Photos Header */}
       <div className="sticky top-0 z-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
         <div className="w-full px-3 sm:px-4 md:px-6 py-3 md:py-4">

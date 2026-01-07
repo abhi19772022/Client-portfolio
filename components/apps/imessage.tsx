@@ -115,7 +115,7 @@ export default function IMessage({ isDarkMode }: { isDarkMode?: boolean }) {
       setTimeout(() => {
         const firstQuestion = getNextQuestion(0, {})
         if (firstQuestion) {
-          addAIMessage(firstQuestion.question, firstQuestion.options, firstQuestion.type === "input" ? firstQuestion.inputType : undefined, firstQuestion.type === "dual-input")
+          addAIMessage(firstQuestion.question, firstQuestion.options, firstQuestion.type === "input" ? firstQuestion.inputType as "email" | "phone" | "text" | "number" | undefined : undefined, firstQuestion.type === "dual-input")
         }
         setInitialized(true)
       }, 500)
@@ -173,7 +173,7 @@ export default function IMessage({ isDarkMode }: { isDarkMode?: boolean }) {
     if (nextQuestion) {
       setTimeout(() => {
         if (nextQuestion.type === "input") {
-          addAIMessage(nextQuestion.question, undefined, nextQuestion.inputType)
+          addAIMessage(nextQuestion.question, undefined, nextQuestion.inputType as "email" | "phone" | "text" | "number" | undefined)
         } else if (nextQuestion.type === "dual-input") {
           addAIMessage(nextQuestion.question, undefined, undefined, true)
         } else {
@@ -217,7 +217,7 @@ export default function IMessage({ isDarkMode }: { isDarkMode?: boolean }) {
     if (nextQuestion) {
       setTimeout(() => {
         if (nextQuestion.type === "input") {
-          addAIMessage(nextQuestion.question, undefined, nextQuestion.inputType)
+          addAIMessage(nextQuestion.question, undefined, nextQuestion.inputType as "email" | "phone" | "text" | "number" | undefined)
         } else if (nextQuestion.type === "dual-input") {
           addAIMessage(nextQuestion.question, undefined, undefined, true)
         } else {
@@ -270,7 +270,14 @@ export default function IMessage({ isDarkMode }: { isDarkMode?: boolean }) {
   }
 
   return (
-    <div className={`h-full w-full flex flex-col ${isDarkMode ? 'bg-black' : 'bg-white'}`}>
+    <div 
+      className="h-full w-full flex flex-col"
+      style={{
+        background: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+        backdropFilter: 'blur(10.9px)',
+        WebkitBackdropFilter: 'blur(10.9px)',
+      }}
+    >
       {/* Header */}
       <div className={`flex items-center gap-3 px-4 py-3 border-b ${isDarkMode ? 'border-gray-800 bg-gray-900' : 'border-gray-200 bg-gray-50'}`}>
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-bold">

@@ -128,7 +128,14 @@ export default function Music() {
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0
 
   return (
-    <div className="h-full w-full flex items-center justify-center p-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black">
+    <div 
+      className="h-full w-full flex items-center justify-center p-4"
+      style={{
+        background: 'rgba(255, 255, 255, 0)',
+        backdropFilter: 'blur(10.9px)',
+        WebkitBackdropFilter: 'blur(10.9px)',
+      }}
+    >
       <audio ref={audioRef} src={currentTrack.file} />
 
       {/* Compact macOS-style Music Player */}

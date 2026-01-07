@@ -259,7 +259,15 @@ export default function Snake({ isDarkMode = true }: SnakeProps) {
   }
 
   return (
-    <div className={`h-full flex flex-col ${isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-800"} p-4`}>
+    <div 
+      className="h-full flex flex-col p-4"
+      style={{
+        background: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+        backdropFilter: 'blur(10.9px)',
+        WebkitBackdropFilter: 'blur(10.9px)',
+        color: isDarkMode ? 'white' : '#1f2937',
+      }}
+    >
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Snake Game</h2>
         <div className="flex space-x-2">

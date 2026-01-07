@@ -22,7 +22,12 @@ import {
   TrendingUp,
   Menu,
   X,
-  ChevronLeft
+  ChevronLeft,
+  Heart,
+  Clapperboard,
+  Smartphone,
+  Music,
+  CheckCircle2
 } from "lucide-react"
 
 interface NotesProps {
@@ -48,7 +53,7 @@ export default function Notes({ isDarkMode = true }: NotesProps) {
       id: 1,
       folder: "portfolio",
       title: "About Himashu",
-      preview: "Professional Video Editor with 5+ years of experience specializing in wedding films, brand commercials...",
+      preview: "Professional Video Editor with 5+ years of experience specializing in brand commercials, corporate videos...",
       content: "full",
       date: "Jan 7, 2026",
       time: "10:30 AM",
@@ -58,12 +63,12 @@ export default function Notes({ isDarkMode = true }: NotesProps) {
     {
       id: 2,
       folder: "projects",
-      title: "Wedding Film - Sarah & Michael",
-      preview: "Cinematic wedding highlight reel featuring drone shots, emotional vows, and reception celebrations...",
+      title: "Corporate Training Series - TechCorp",
+      preview: "Professional training video series with interviews, product demonstrations, and educational content...",
       content: "project1",
       date: "Jan 6, 2026",
       time: "3:45 PM",
-      tags: ["#wedding", "#inprogress"],
+      tags: ["#corporate", "#inprogress"],
       hasImage: true,
     },
     {
@@ -130,7 +135,7 @@ export default function Notes({ isDarkMode = true }: NotesProps) {
             <div className="prose max-w-none">
               <p className="text-sm md:text-base text-gray-800 leading-relaxed bg-white rounded-xl p-4 md:p-6 shadow-md border border-amber-100">
                 Creative storyteller with 5+ years of experience transforming raw footage into compelling visual narratives. 
-                Specialized in wedding films, brand commercials, and social media content that connects with audiences.
+                Specialized in brand commercials, corporate videos, and social media content that connects with audiences.
               </p>
 
               <div className="grid grid-cols-3 gap-2 md:gap-4 my-4 md:my-6 not-prose">
@@ -151,16 +156,20 @@ export default function Notes({ isDarkMode = true }: NotesProps) {
               <h3 className="text-lg md:text-xl font-semibold text-gray-900 mt-4 md:mt-6 mb-3">What I Do</h3>
               <ul className="space-y-2 text-sm md:text-base text-gray-800 bg-white rounded-xl p-4 md:p-6 shadow-md border border-amber-100">
                 <li className="flex items-center gap-2">
-                  <span>❤️</span> Wedding Films & Cinematic Highlights
+                  <Briefcase className="w-4 h-4 text-blue-600" />
+                  Corporate Videos & Training Content
                 </li>
                 <li className="flex items-center gap-2">
-                  <span>🎬</span> Brand Commercials & Product Videos
+                  <Clapperboard className="w-4 h-4 text-blue-600" />
+                  Brand Commercials & Product Videos
                 </li>
                 <li className="flex items-center gap-2">
-                  <span>📱</span> Social Media Reels & Shorts
+                  <Smartphone className="w-4 h-4 text-purple-600" />
+                  Social Media Reels & Shorts
                 </li>
                 <li className="flex items-center gap-2">
-                  <span>🎵</span> Music Videos & Creative Content
+                  <Music className="w-4 h-4 text-green-600" />
+                  Music Videos & Creative Content
                 </li>
               </ul>
 
@@ -170,10 +179,22 @@ export default function Notes({ isDarkMode = true }: NotesProps) {
                   Why Choose Me
                 </h3>
                 <ul className="space-y-2 text-gray-700 text-xs md:text-sm">
-                  <li>✓ Quick turnaround without compromising quality</li>
-                  <li>✓ Unlimited revisions until you're 100% satisfied</li>
-                  <li>✓ Professional color grading and sound design</li>
-                  <li>✓ Multiple format delivery (YouTube, Instagram, etc.)</li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    Quick turnaround without compromising quality
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    Unlimited revisions until you're 100% satisfied
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    Professional color grading and sound design
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    Multiple format delivery (YouTube, Instagram, etc.)
+                  </li>
                 </ul>
               </div>
             </div>
@@ -184,17 +205,17 @@ export default function Notes({ isDarkMode = true }: NotesProps) {
         return (
           <div className="space-y-4 md:space-y-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Wedding Film</h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Corporate Training Series</h1>
               <span className="px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-yellow-100 text-yellow-800 text-xs md:text-sm border border-yellow-300 shadow-sm">
                 In Progress
               </span>
             </div>
 
             <div className="bg-white rounded-xl p-1 border border-amber-200 overflow-hidden shadow-md">
-              <div className="aspect-video bg-gradient-to-br from-pink-100 to-rose-100 rounded-lg flex items-center justify-center">
+              <div className="aspect-video bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg flex items-center justify-center">
                 <div className="text-center">
-                  <Video className="w-12 h-12 md:w-16 md:h-16 text-pink-500 mx-auto mb-2 md:mb-3" />
-                  <p className="text-xs md:text-sm text-gray-600">Wedding Highlight Reel Preview</p>
+                  <Video className="w-12 h-12 md:w-16 md:h-16 text-blue-600 mx-auto mb-2 md:mb-3" />
+                  <p className="text-xs md:text-sm text-gray-600">Training Video Preview</p>
                 </div>
               </div>
             </div>
@@ -205,11 +226,11 @@ export default function Notes({ isDarkMode = true }: NotesProps) {
                 <div className="grid grid-cols-2 gap-2 md:gap-3">
                   <div className="bg-white rounded-lg p-2 md:p-3 border border-amber-200 shadow-sm">
                     <div className="text-xs md:text-sm text-gray-500">Client</div>
-                    <div className="text-sm md:text-base text-gray-900 font-medium">Sarah & Michael</div>
+                    <div className="text-sm md:text-base text-gray-900 font-medium">TechCorp Inc.</div>
                   </div>
                   <div className="bg-white rounded-lg p-2 md:p-3 border border-amber-200 shadow-sm">
                     <div className="text-xs md:text-sm text-gray-500">Duration</div>
-                    <div className="text-sm md:text-base text-gray-900 font-medium">8-10 minutes</div>
+                    <div className="text-sm md:text-base text-gray-900 font-medium">12-15 minutes</div>
                   </div>
                   <div className="bg-white rounded-lg p-2 md:p-3 border border-amber-200 shadow-sm">
                     <div className="text-xs md:text-sm text-gray-500">Deadline</div>
@@ -457,7 +478,14 @@ export default function Notes({ isDarkMode = true }: NotesProps) {
   }
 
   return (
-    <div className="h-full w-full flex items-center justify-center bg-[#e5e5e5] p-2 md:p-4">
+    <div 
+      className="h-full w-full flex items-center justify-center p-2 md:p-4"
+      style={{
+        background: 'rgba(255, 255, 255, 0)',
+        backdropFilter: 'blur(10.9px)',
+        WebkitBackdropFilter: 'blur(10.9px)',
+      }}
+    >
       {/* Notes App Container with larger default size */}
       <div className="w-full max-w-[95vw] h-full max-h-[95vh] flex relative bg-[#f5f5f5] rounded-xl shadow-2xl overflow-hidden">
         {/* Mobile Menu Button - Top Left */}

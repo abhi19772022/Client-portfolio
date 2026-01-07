@@ -6,6 +6,7 @@ import LoginScreen from "@/components/login-screen"
 import Desktop from "@/components/desktop"
 import SleepScreen from "@/components/sleep-screen"
 import ShutdownScreen from "@/components/shutdown-screen"
+import ClickSound from "@/components/click-sound"
 
 type SystemState = "booting" | "login" | "desktop" | "sleeping" | "shutdown" | "restarting"
 
@@ -13,6 +14,7 @@ export default function Home() {
   const [systemState, setSystemState] = useState<SystemState>("booting")
   const [isDarkMode, setIsDarkMode] = useState(false) // Default to light mode
   const [screenBrightness, setScreenBrightness] = useState(90)
+  const [sfxEnabled, setSfxEnabled] = useState(true) // SFX enabled by default
 
   // Simulate boot sequence
   useEffect(() => {
@@ -44,6 +46,11 @@ export default function Home() {
     const savedBrightness = localStorage.getItem("screenBrightness")
     if (savedBrightness !== null) {
       setScreenBrightness(Number.parseInt(savedBrightness))
+    }
+
+    const savedSFX = localStorage.getItem("sfxEnabled")
+    if (savedSFX !== null) {
+      setSfxEnabled(savedSFX === "true")
     }
   }, [])
 
@@ -86,6 +93,12 @@ export default function Home() {
     localStorage.setItem("screenBrightness", value.toString())
   }
 
+  const toggleSFX = () => {
+    const newSFX = !sfxEnabled
+    setSfxEnabled(newSFX)
+    localStorage.setItem("sfxEnabled", newSFX.toString())
+  }
+
   // Render the appropriate screen based on system state
   const renderScreen = () => {
     switch (systemState) {
@@ -107,6 +120,8 @@ export default function Home() {
             onToggleDarkMode={toggleDarkMode}
             initialBrightness={screenBrightness}
             onBrightnessChange={updateBrightness}
+            sfxEnabled={sfxEnabled}
+            onToggleSFX={toggleSFX}
           />
         )
 
@@ -123,6 +138,7 @@ export default function Home() {
 
   return (
     <div className="relative">
+      <ClickSound sfxEnabled={sfxEnabled} />
       {renderScreen()}
 
       {/* Brightness overlay - apply to all screens */}

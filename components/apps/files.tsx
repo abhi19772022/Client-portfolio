@@ -500,7 +500,14 @@ export default function Files() {
   }
 
   return (
-    <div className="h-full w-full flex flex-col bg-white dark:bg-gray-900">
+    <div 
+      className="h-full w-full flex flex-col"
+      style={{
+        background: 'rgba(255, 255, 255, 0)',
+        backdropFilter: 'blur(10.9px)',
+        WebkitBackdropFilter: 'blur(10.9px)',
+      }}
+    >
       {/* Tab Bar */}
       <div className="h-9 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center px-2 overflow-x-auto">
         {tabs.map((tab, index) => (

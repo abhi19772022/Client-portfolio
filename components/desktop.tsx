@@ -3,6 +3,8 @@
 import type React from "react"
 
 import { useState, useEffect, useRef, useCallback } from "react"
+import gsap from "gsap"
+import { Draggable } from "gsap/Draggable"
 import Dock from "@/components/dock"
 import Menubar from "@/components/menubar"
 import Wallpaper from "@/components/wallpaper"
@@ -23,6 +25,8 @@ interface DesktopProps {
   onToggleDarkMode: () => void
   initialBrightness: number
   onBrightnessChange: (value: number) => void
+  sfxEnabled: boolean
+  onToggleSFX: () => void
 }
 
 export default function Desktop({
@@ -34,6 +38,8 @@ export default function Desktop({
   onToggleDarkMode,
   initialBrightness,
   onBrightnessChange,
+  sfxEnabled,
+  onToggleSFX,
 }: DesktopProps) {
   const [time, setTime] = useState(new Date())
   const [openWindows, setOpenWindows] = useState<AppWindow[]>([])
@@ -49,6 +55,8 @@ export default function Desktop({
   const [showSecondNote, setShowSecondNote] = useState(false)
   const [draggingItem, setDraggingItem] = useState<string | null>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const stickyNoteRef = useRef<HTMLDivElement>(null)
+  const [isExpanded, setIsExpanded] = useState(false)
   const [iconPositions, setIconPositions] = useState({
     aboutMe: { x: 32, y: 260 }, // left-8 (32px), moved further down to y: 260px
     longForm: { x: window.innerWidth * 0.78, y: 128 }, // right-[22%] (78%), top-32 (128px)
@@ -73,6 +81,30 @@ export default function Desktop({
   useEffect(() => {
     setScreenBrightness(initialBrightness)
   }, [initialBrightness])
+
+  // GSAP Draggable setup for sticky note
+  useEffect(() => {
+    if (typeof window !== 'undefined' && stickyNoteRef.current) {
+      gsap.registerPlugin(Draggable)
+      
+      const draggableInstance = Draggable.create(stickyNoteRef.current, {
+        type: "x,y",
+        inertia: true,
+        onRelease: function() {
+          gsap.to(this.target, {
+            x: 0,
+            y: 0,
+            duration: 1.5,
+            ease: "elastic.out(1, 0.3)"
+          })
+        }
+      })
+
+      return () => {
+        draggableInstance[0]?.kill()
+      }
+    }
+  }, [])
 
   const openApp = (app: AppWindow) => {
     // Check if app is already open
@@ -366,56 +398,82 @@ export default function Desktop({
         {/* Video Editor Widgets - Hidden but keeping code */}
         {false && <VideoEditorWidgets isDarkMode={isDarkMode} />}
 
-        {/* Dual Sticky Notes - Extreme Top Left */}
-        <div className="absolute top-6 left-6 z-10 hidden sm:block perspective-1000">
-          <div className="relative">
-            {/* Second Note (Behind) - My Intro */}
-            <div 
-              className={`absolute inset-0 bg-[#FFE082] shadow-lg rounded-sm p-2.5 md:p-3 w-48 md:w-56 font-['Marker_Felt'] transform transition-all duration-700 ease-in-out ${
-                showSecondNote 
-                  ? 'rotate-0 scale-100 opacity-100 translate-x-0 translate-y-0 z-20' 
-                  : 'rotate-3 scale-98 opacity-85 translate-x-3 translate-y-3 z-0'
-              }`}
-              onClick={() => setShowSecondNote(!showSecondNote)}
-              style={{ cursor: 'pointer' }}
-            >
-              <div className="text-[#333333] space-y-1.5">
-                <div className="font-bold text-sm md:text-base mb-2 text-center underline">My Intro</div>
-                <div className="text-[10px] md:text-xs space-y-1.5 leading-relaxed">
-                  <div>👋 <strong>Hi, I'm Himashu!</strong></div>
-                  <div>🎬 Professional Video Editor</div>
-                  <div>✨ Creative Storyteller</div>
-                  <div>💼 5+ Years Experience</div>
-                  <div>🎨 DaVinci Resolve Expert</div>
-                  <div>🎵 Audio & Color Master</div>
-                  <div>📱 Social Media Specialist</div>
-                  <div>🎯 147 Projects Completed</div>
-                </div>
-              </div>
-            </div>
+        {/* SVG Filter for Liquid Glass Effect */}
+        <svg style={{ display: 'none' }} xmlns="http://www.w3.org/2000/svg">
+          <filter id="glass-blur" x="0" y="0" width="100%" height="100%" filterUnits="objectBoundingBox">
+            <feTurbulence type="fractalNoise" baseFrequency="0.003 0.007" numOctaves="1" result="turbulence" />
+            <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="200" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </svg>
 
-            {/* First Note (Front) - To Do List */}
+        {/* Single Sticky Note - Liquid Glass Theme */}
+        <div className="absolute top-6 left-6 z-10 hidden sm:block">
+          <div 
+            ref={stickyNoteRef}
+            className={`relative rounded-2xl overflow-hidden transform hover:rotate-0 transition-all duration-300 ${
+              isExpanded ? 'w-80 md:w-96' : 'w-56 md:w-64'
+            }`}
+            onClick={() => setIsExpanded(!isExpanded)}
+            style={{ 
+              cursor: 'grab',
+              boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+              rotate: '1deg',
+            }}
+          >
+            {/* Liquid Glass Bend Layer - backdrop blur with distortion */}
             <div 
-              className={`relative bg-[#FFE082] shadow-xl rounded-sm p-2.5 md:p-3 w-48 md:w-56 font-['Marker_Felt'] transform transition-all duration-700 ease-in-out ${
-                showSecondNote 
-                  ? 'rotate-3 scale-98 opacity-85 -translate-x-3 -translate-y-3 z-0' 
-                  : 'rotate-1 scale-100 opacity-100 translate-x-0 translate-y-0 z-20'
-              } hover:rotate-0`}
-              onClick={() => setShowSecondNote(!showSecondNote)}
-              style={{ cursor: 'pointer' }}
-            >
-              <div className="text-[#333333] space-y-1.5">
-                <div className="font-bold text-xs md:text-sm mb-2 underline">To do:</div>
-                <div className="text-[10px] md:text-xs space-y-1 leading-snug">
-                  <div>• Improve the LLX job</div>
-                  <div>• Drink water</div>
-                  <div>• Move to the US</div>
-                  <div>• Reduce some kilos as I am eating too much</div>
-                  <div>• Build that banger spotify playlist</div>
-                  <div>• World domination</div>
-                  <div>• Get many good at making pasta</div>
-                  <div>• Travel somewhere new every year</div>
-                </div>
+              className="absolute inset-0 rounded-2xl"
+              style={{
+                zIndex: 0,
+                backdropFilter: 'blur(3px)',
+                WebkitBackdropFilter: 'blur(3px)',
+                filter: 'url(#glass-blur)',
+                isolation: 'isolate',
+              }}
+            />
+            
+            {/* Liquid Glass Face Layer - depth shadow */}
+            <div 
+              className="absolute inset-0 rounded-2xl"
+              style={{
+                zIndex: 1,
+                boxShadow: '0 4px 4px rgba(0, 0, 0, 0.15), 0 0 12px rgba(0, 0, 0, 0.08)',
+              }}
+            />
+            
+            {/* Liquid Glass Edge Layer - inset highlights */}
+            <div 
+              className="absolute inset-0 rounded-2xl"
+              style={{
+                zIndex: 2,
+                boxShadow: 'inset 3px 3px 3px 0 rgba(255, 255, 255, 0.45), inset -3px -3px 3px 0 rgba(255, 255, 255, 0.45)',
+              }}
+            />
+
+            {/* Content */}
+            <div className={`relative z-10 space-y-3 p-4 md:p-5 transition-all duration-300 ${
+              isExpanded ? 'p-6 md:p-7' : ''
+            }`}>
+              <div className={`font-bold mb-3 transition-all duration-300 ${
+                isExpanded ? 'text-xl md:text-2xl' : 'text-base md:text-lg'
+              } ${
+                isDarkMode 
+                  ? 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]' 
+                  : 'text-gray-900 drop-shadow-[0_2px_4px_rgba(255,255,255,0.8)]'
+              }`}>Professional Portfolio</div>
+              <div className={`text-xs md:text-sm space-y-2 leading-relaxed transition-all duration-300 ${
+                isExpanded ? 'text-sm md:text-base space-y-3' : ''
+              } ${
+                isDarkMode 
+                  ? 'text-white/95 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]' 
+                  : 'text-gray-800/95 drop-shadow-[0_2px_4px_rgba(255,255,255,0.8)]'
+              }`}>
+                <div>Video Editor & Creative</div>
+                <div>5+ Years Experience</div>
+                <div>DaVinci Resolve Expert</div>
+                <div>147 Projects Completed</div>
+                <div>Corporate & Brand Content</div>
+                <div>Social Media Specialist</div>
               </div>
             </div>
           </div>
@@ -463,6 +521,7 @@ export default function Desktop({
               onClose={() => closeWindow(window.id)}
               onFocus={() => setActiveWindow(window.id)}
               isDarkMode={isDarkMode}
+              onAppClick={openApp}
             />
           ))}
         </div>
@@ -479,6 +538,8 @@ export default function Desktop({
             brightness={screenBrightness}
             onBrightnessChange={updateBrightness}
             onShutdown={onShutdown}
+            sfxEnabled={sfxEnabled}
+            onToggleSFX={onToggleSFX}
           />
         )}
 

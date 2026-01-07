@@ -130,7 +130,14 @@ export default function Testimonials({ isDarkMode }: { isDarkMode?: boolean }) {
   
 
   return (
-    <div className={`h-full w-full overflow-auto ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+    <div 
+      className="h-full w-full overflow-auto"
+      style={{
+        background: 'rgba(255, 255, 255, 0)',
+        backdropFilter: 'blur(10.9px)',
+        WebkitBackdropFilter: 'blur(10.9px)',
+      }}
+    >
       <div className="py-8">
         <AnimatedTestimonials testimonials={testimonials} />
       </div>

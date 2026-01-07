@@ -222,7 +222,16 @@ export default function Terminal({ isDarkMode = true }: TerminalProps) {
   }
 
   return (
-    <div ref={terminalRef} className={`h-full ${bgColor} ${textColor} p-4 font-mono text-sm overflow-auto`}>
+    <div 
+      ref={terminalRef} 
+      className="h-full p-4 font-mono text-sm overflow-auto"
+      style={{
+        background: 'rgba(0, 0, 0, 0.8)',
+        backdropFilter: 'blur(10.9px)',
+        WebkitBackdropFilter: 'blur(10.9px)',
+        color: '#4ade80',
+      }}
+    >
       {history.map((line, index) => (
         <div key={index} className="whitespace-pre-wrap">
           {line}

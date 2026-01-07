@@ -212,7 +212,14 @@ export default function Spotify({ isDarkMode = true }: SpotifyProps) {
   }
 
   return (
-    <div className={`h-full ${bgColor} ${textColor} flex flex-col`}>
+    <div 
+      className="h-full flex flex-col"
+      style={{
+        background: 'rgba(255, 255, 255, 0)',
+        backdropFilter: 'blur(10.9px)',
+        WebkitBackdropFilter: 'blur(10.9px)',
+      }}
+    >
       {/* Header */}
       <div className={`${secondaryBg} p-4 flex items-center justify-between`}>
         <div className="flex items-center">

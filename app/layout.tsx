@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { Analytics } from "@vercel/analytics/react"
-import ClickSound from '@/components/click-sound'
 
 export const metadata: Metadata = {
   title: 'Himashu - Video Editor & Creative Storyteller',
@@ -21,7 +20,6 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
       </head>
       <body>
-        <ClickSound />
         {children} 
         <Analytics />
       </body>

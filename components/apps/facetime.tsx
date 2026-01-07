@@ -85,7 +85,15 @@ export default function FaceTime({ isDarkMode = true }: FaceTimeProps) {
   }
 
   return (
-    <div className={`h-full flex flex-col ${bgColor} ${textColor}`}>
+    <div 
+      className="h-full flex flex-col"
+      style={{
+        background: isDarkMode ? 'rgba(17, 24, 39, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+        backdropFilter: 'blur(10.9px)',
+        WebkitBackdropFilter: 'blur(10.9px)',
+        color: isDarkMode ? 'white' : '#1f2937',
+      }}
+    >
       <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
         {isCameraAvailable ? (
           <video ref={videoRef} autoPlay playsInline className="w-full max-w-2xl h-auto rounded-xl bg-black" />

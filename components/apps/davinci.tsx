@@ -39,7 +39,14 @@ export default function DaVinci() {
   }
 
   return (
-    <div className="h-full w-full bg-[#1a1a1a] flex items-center justify-center overflow-hidden relative">
+    <div 
+      className="h-full w-full flex items-center justify-center overflow-hidden relative"
+      style={{
+        background: 'rgba(255, 255, 255, 0)',
+        backdropFilter: 'blur(10.9px)',
+        WebkitBackdropFilter: 'blur(10.9px)',
+      }}
+    >
       {/* Main Image */}
       <div className="relative w-full h-full">
         <Image

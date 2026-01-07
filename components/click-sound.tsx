@@ -2,17 +2,21 @@
 
 import { useEffect, useRef } from "react"
 
-export default function ClickSound() {
+interface ClickSoundProps {
+  sfxEnabled: boolean
+}
+
+export default function ClickSound({ sfxEnabled }: ClickSoundProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
     // Create audio element
     audioRef.current = new Audio("/mouse-click-331781.mp3")
-    audioRef.current.volume = 0.3 // Set volume to 30%
+    audioRef.current.volume = 0.15 // Set volume to 15% (reduced from 30%)
 
     const handleClick = (e: MouseEvent) => {
-      // Play click sound
-      if (audioRef.current) {
+      // Play click sound only if SFX is enabled
+      if (audioRef.current && sfxEnabled) {
         // Reset audio to start if it's already playing
         audioRef.current.currentTime = 0
         audioRef.current.play().catch((error) => {
@@ -33,7 +37,7 @@ export default function ClickSound() {
         audioRef.current = null
       }
     }
-  }, [])
+  }, [sfxEnabled])
 
   return null // This component doesn't render anything
 }

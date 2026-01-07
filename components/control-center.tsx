@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Wifi, Bluetooth, Moon, Sun, Volume2, Radio, Monitor, Music, Play, Pause, SkipForward, Power, Settings, Maximize, Minimize } from "lucide-react"
+import { Wifi, Bluetooth, Moon, Sun, Volume2, Volume2 as VolumeIcon, Radio, Monitor, Music, Play, Pause, SkipForward, Power, Settings, Maximize, Minimize } from "lucide-react"
 import Image from "next/image"
 
 interface ControlCenterProps {
@@ -11,6 +11,8 @@ interface ControlCenterProps {
   brightness: number
   onBrightnessChange: (value: number) => void
   onShutdown?: () => void
+  sfxEnabled: boolean
+  onToggleSFX: () => void
 }
 
 export default function ControlCenter({
@@ -20,6 +22,8 @@ export default function ControlCenter({
   brightness,
   onBrightnessChange,
   onShutdown,
+  sfxEnabled,
+  onToggleSFX,
 }: ControlCenterProps) {
   const [wifiEnabled, setWifiEnabled] = useState(true)
   const [bluetoothEnabled, setBluetoothEnabled] = useState(true)
@@ -147,12 +151,15 @@ export default function ControlCenter({
       <audio ref={audioRef} src="/lofi-study-112191.mp3" loop />
       
       <div
-        className="fixed top-8 right-4 w-[360px] rounded-[24px] overflow-hidden shadow-2xl z-40"
+        className="fixed top-8 right-4 w-[360px] overflow-hidden z-40"
         onClick={(e) => e.stopPropagation()}
         style={{
-          background: 'linear-gradient(135deg, rgba(80, 40, 50, 0.85) 0%, rgba(60, 70, 90, 0.85) 100%)',
-          backdropFilter: 'blur(60px)',
-          WebkitBackdropFilter: 'blur(60px)',
+          background: 'rgba(255, 255, 255, 0)',
+          borderRadius: '16px',
+          boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+          backdropFilter: 'blur(10.9px)',
+          WebkitBackdropFilter: 'blur(10.9px)',
+          border: '1px solid rgba(255, 255, 255, 0.09)',
         }}
       >
         <div className="p-4 space-y-2.5">
@@ -162,20 +169,20 @@ export default function ControlCenter({
               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center overflow-hidden">
                 <span className="text-white text-base font-semibold">HE</span>
               </div>
-              <span className="text-white font-medium text-sm">Himanshu </span>
+              <span className={`font-medium text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}>Himanshu </span>
             </div>
             <div className="flex items-center space-x-1.5">
               <button 
                 className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
                 onClick={onClose}
               >
-                <Settings className="w-4 h-4 text-white" />
+                <Settings className={`w-4 h-4 ${isDarkMode ? 'text-white' : 'text-black'}`} />
               </button>
               <button 
                 className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
                 onClick={handlePowerOff}
               >
-                <Power className="w-4 h-4 text-white" />
+                <Power className={`w-4 h-4 ${isDarkMode ? 'text-white' : 'text-black'}`} />
               </button>
             </div>
           </div>
@@ -195,13 +202,13 @@ export default function ControlCenter({
               >
                 <div className="flex items-center space-x-2.5">
                   <div className={`p-1.5 rounded-lg ${wifiEnabled ? 'bg-white/20' : 'bg-white/10'}`}>
-                    <Wifi className={`w-5 h-5 ${wifiEnabled ? "text-white" : "text-white/60"}`} />
+                    <Wifi className={`w-5 h-5 ${wifiEnabled ? "text-white" : isDarkMode ? "text-white/60" : "text-black/60"}`} />
                   </div>
                   <div className="text-left flex-1">
-                    <p className={`text-xs font-semibold ${wifiEnabled ? "text-white" : "text-white/70"}`}>
+                    <p className={`text-xs font-semibold ${wifiEnabled ? "text-white" : isDarkMode ? "text-white/70" : "text-black/70"}`}>
                       Wi-Fi
                     </p>
-                    <p className={`text-[10px] ${wifiEnabled ? "text-white/80" : "text-white/50"}`}>
+                    <p className={`text-[10px] ${wifiEnabled ? "text-white/80" : isDarkMode ? "text-white/50" : "text-black/50"}`}>
                       {wifiEnabled ? "Superonline 5G" : "Off"}
                     </p>
                   </div>
@@ -219,38 +226,38 @@ export default function ControlCenter({
               >
                 <div className="flex items-center space-x-2.5">
                   <div className={`p-1.5 rounded-lg ${bluetoothEnabled ? 'bg-white/20' : 'bg-white/10'}`}>
-                    <Bluetooth className={`w-5 h-5 ${bluetoothEnabled ? "text-white" : "text-white/60"}`} />
+                    <Bluetooth className={`w-5 h-5 ${bluetoothEnabled ? "text-white" : isDarkMode ? "text-white/60" : "text-black/60"}`} />
                   </div>
                   <div className="text-left flex-1">
-                    <p className={`text-xs font-semibold ${bluetoothEnabled ? "text-white" : "text-white/70"}`}>
+                    <p className={`text-xs font-semibold ${bluetoothEnabled ? "text-white" : isDarkMode ? "text-white/70" : "text-black/70"}`}>
                       Bluetooth
                     </p>
-                    <p className={`text-[10px] ${bluetoothEnabled ? "text-white/80" : "text-white/50"}`}>
+                    <p className={`text-[10px] ${bluetoothEnabled ? "text-white/80" : isDarkMode ? "text-white/50" : "text-black/50"}`}>
                       {bluetoothEnabled ? "On" : "Off"}
                     </p>
                   </div>
                 </div>
               </button>
 
-              {/* AirDrop */}
+              {/* Click Sound Effects */}
               <button
                 className={`w-full p-3 rounded-xl transition-all ${
-                  airDropEnabled 
-                    ? "bg-blue-500/95" 
+                  sfxEnabled 
+                    ? "bg-green-500/95" 
                     : "bg-white/15"
                 }`}
-                onClick={toggleAirDrop}
+                onClick={onToggleSFX}
               >
                 <div className="flex items-center space-x-2.5">
-                  <div className={`p-1.5 rounded-lg ${airDropEnabled ? 'bg-white/20' : 'bg-white/10'}`}>
-                    <Radio className={`w-5 h-5 ${airDropEnabled ? "text-white" : "text-white/60"}`} />
+                  <div className={`p-1.5 rounded-lg ${sfxEnabled ? 'bg-white/20' : 'bg-white/10'}`}>
+                    <VolumeIcon className={`w-5 h-5 ${sfxEnabled ? "text-white" : isDarkMode ? "text-white/60" : "text-black/60"}`} />
                   </div>
                   <div className="text-left flex-1">
-                    <p className={`text-xs font-semibold ${airDropEnabled ? "text-white" : "text-white/70"}`}>
-                      AirDrop
+                    <p className={`text-xs font-semibold ${sfxEnabled ? "text-white" : isDarkMode ? "text-white/70" : "text-black/70"}`}>
+                      Click SFX
                     </p>
-                    <p className={`text-[10px] ${airDropEnabled ? "text-white/80" : "text-white/50"}`}>
-                      {airDropEnabled ? "Everyone" : "Off"}
+                    <p className={`text-[10px] ${sfxEnabled ? "text-white/80" : isDarkMode ? "text-white/50" : "text-black/50"}`}>
+                      {sfxEnabled ? "On" : "Off"}
                     </p>
                   </div>
                 </div>
@@ -270,13 +277,13 @@ export default function ControlCenter({
               >
                 <div className="flex flex-col items-start h-full justify-between">
                   <div className={`p-1.5 rounded-lg ${doNotDisturb ? 'bg-white/20' : 'bg-white/10'}`}>
-                    <Moon className={`w-5 h-5 ${doNotDisturb ? "text-white" : "text-white/60"}`} />
+                    <Moon className={`w-5 h-5 ${doNotDisturb ? "text-white" : isDarkMode ? "text-white/60" : "text-black/60"}`} />
                   </div>
                   <div className="text-left mt-6">
-                    <p className={`text-xs font-semibold ${doNotDisturb ? "text-white" : "text-white/70"}`}>
+                    <p className={`text-xs font-semibold ${doNotDisturb ? "text-white" : isDarkMode ? "text-white/70" : "text-black/70"}`}>
                       Don't Disturb
                     </p>
-                    <p className={`text-[10px] ${doNotDisturb ? "text-white/80" : "text-white/50"}`}>
+                    <p className={`text-[10px] ${doNotDisturb ? "text-white/80" : isDarkMode ? "text-white/50" : "text-black/50"}`}>
                       {doNotDisturb ? "On" : "Off"}
                     </p>
                   </div>
@@ -293,11 +300,11 @@ export default function ControlCenter({
                 >
                   <div className="flex flex-col items-center justify-center h-full">
                     {isFullscreen ? (
-                      <Minimize className={`w-5 h-5 ${isFullscreen ? 'text-white' : 'text-white/80'} mb-0.5`} />
+                      <Minimize className={`w-5 h-5 ${isFullscreen ? 'text-white' : isDarkMode ? 'text-white/80' : 'text-black/80'} mb-0.5`} />
                     ) : (
-                      <Maximize className={`w-5 h-5 ${isFullscreen ? 'text-white' : 'text-white/80'} mb-0.5`} />
+                      <Maximize className={`w-5 h-5 ${isFullscreen ? 'text-white' : isDarkMode ? 'text-white/80' : 'text-black/80'} mb-0.5`} />
                     )}
-                    <p className={`text-[8px] ${isFullscreen ? 'text-white' : 'text-white/70'} text-center leading-tight`}>
+                    <p className={`text-[8px] ${isFullscreen ? 'text-white' : isDarkMode ? 'text-white/70' : 'text-black/70'} text-center leading-tight`}>
                       {isFullscreen ? 'Exit' : 'Fullscreen'}
                     </p>
                   </div>
@@ -327,7 +334,7 @@ export default function ControlCenter({
           {/* Brightness Slider */}
           <div className="bg-white/15 rounded-xl p-3">
             <div className="flex items-center space-x-2.5">
-              <Sun className="w-4 h-4 text-white/80 flex-shrink-0" />
+              <Sun className={`w-4 h-4 flex-shrink-0 ${isDarkMode ? 'text-white/80' : 'text-black/80'}`} />
               <div className="flex-1 relative h-6 flex items-center">
                 <input
                   type="range"
@@ -337,13 +344,17 @@ export default function ControlCenter({
                   onChange={(e) => handleDisplayChange(Number.parseInt(e.target.value))}
                   className="w-full h-1 rounded-full appearance-none cursor-pointer"
                   style={{
-                    background: `linear-gradient(to right, white 0%, white ${displayBrightness}%, rgba(255,255,255,0.2) ${displayBrightness}%, rgba(255,255,255,0.2) 100%)`,
+                    background: isDarkMode 
+                      ? `linear-gradient(to right, white 0%, white ${displayBrightness}%, rgba(255,255,255,0.2) ${displayBrightness}%, rgba(255,255,255,0.2) 100%)` 
+                      : `linear-gradient(to right, black 0%, black ${displayBrightness}%, rgba(0,0,0,0.2) ${displayBrightness}%, rgba(0,0,0,0.2) 100%)`,
                   }}
                 />
               </div>
               <button 
                 className={`px-2.5 py-0.5 rounded-full text-[10px] font-medium transition-colors ${
-                  autobrightness ? 'bg-white/30 text-white' : 'bg-white/10 text-white/60'
+                  autobrightness 
+                    ? isDarkMode ? 'bg-white/30 text-white' : 'bg-black/30 text-black'
+                    : isDarkMode ? 'bg-white/10 text-white/60' : 'bg-black/10 text-black/60'
                 }`}
                 onClick={() => setAutoBrightness(!autobrightness)}
               >
@@ -355,7 +366,7 @@ export default function ControlCenter({
           {/* Volume Slider */}
           <div className="bg-white/15 rounded-xl p-3">
             <div className="flex items-center space-x-2.5">
-              <Volume2 className="w-4 h-4 text-white/80 flex-shrink-0" />
+              <Volume2 className={`w-4 h-4 flex-shrink-0 ${isDarkMode ? 'text-white/80' : 'text-black/80'}`} />
               <div className="flex-1 relative h-6 flex items-center">
                 <input
                   type="range"
@@ -365,12 +376,14 @@ export default function ControlCenter({
                   onChange={(e) => handleVolumeChange(Number.parseInt(e.target.value))}
                   className="w-full h-1 rounded-full appearance-none cursor-pointer"
                   style={{
-                    background: `linear-gradient(to right, white 0%, white ${volume}%, rgba(255,255,255,0.2) ${volume}%, rgba(255,255,255,0.2) 100%)`,
+                    background: isDarkMode
+                      ? `linear-gradient(to right, white 0%, white ${volume}%, rgba(255,255,255,0.2) ${volume}%, rgba(255,255,255,0.2) 100%)`
+                      : `linear-gradient(to right, black 0%, black ${volume}%, rgba(0,0,0,0.2) ${volume}%, rgba(0,0,0,0.2) 100%)`,
                   }}
                 />
               </div>
               <button className="p-1 hover:bg-white/10 rounded-full transition-colors">
-                <Radio className="w-3.5 h-3.5 text-white/70" />
+                <Radio className={`w-3.5 h-3.5 ${isDarkMode ? 'text-white/70' : 'text-black/70'}`} />
               </button>
             </div>
           </div>
@@ -380,14 +393,14 @@ export default function ControlCenter({
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2.5 flex-1 min-w-0">
                 <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-900 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
-                  <Music className="w-5 h-5 text-white/80" />
+                  <Music className={`w-5 h-5 ${isDarkMode ? 'text-white/80' : 'text-black/80'}`} />
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-white truncate">
+                  <p className={`text-xs font-medium truncate ${isDarkMode ? 'text-white' : 'text-black'}`}>
                     {currentSong.title}
                   </p>
-                  <p className="text-[10px] text-white/60 truncate">
+                  <p className={`text-[10px] truncate ${isDarkMode ? 'text-white/60' : 'text-black/60'}`}>
                     {currentSong.artist}
                   </p>
                 </div>
@@ -399,9 +412,9 @@ export default function ControlCenter({
                   className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
                 >
                   {isPlaying ? (
-                    <Pause className="w-4 h-4 text-white" fill="white" />
+                    <Pause className={`w-4 h-4 ${isDarkMode ? 'text-white' : 'text-black'}`} fill={isDarkMode ? 'white' : 'black'} />
                   ) : (
-                    <Play className="w-4 h-4 text-white" fill="white" />
+                    <Play className={`w-4 h-4 ${isDarkMode ? 'text-white' : 'text-black'}`} fill={isDarkMode ? 'white' : 'black'} />
                   )}
                 </button>
                 
@@ -409,7 +422,7 @@ export default function ControlCenter({
                   onClick={handleNext}
                   className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
                 >
-                  <SkipForward className="w-4 h-4 text-white" fill="white" />
+                  <SkipForward className={`w-4 h-4 ${isDarkMode ? 'text-white' : 'text-black'}`} fill={isDarkMode ? 'white' : 'black'} />
                 </button>
               </div>
             </div>

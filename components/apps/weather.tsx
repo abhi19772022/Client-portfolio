@@ -349,7 +349,14 @@ export default function Weather({ isDarkMode = true }: WeatherProps) {
   }
   
   return (
-    <div className={`h-full ${bgColor} ${textColor} flex flex-col relative overflow-hidden`}>
+    <div 
+      className="h-full flex flex-col relative overflow-hidden"
+      style={{
+        background: 'rgba(255, 255, 255, 0)',
+        backdropFilter: 'blur(10.9px)',
+        WebkitBackdropFilter: 'blur(10.9px)',
+      }}
+    >
       {/* Canvas for weather effects */}
       <canvas 
         ref={canvasRef} 
