@@ -105,9 +105,9 @@ export default function Dock({ onAppClick, onLaunchpadClick, activeAppIds, isDar
     // Distance from mouse to icon center
     const distance = Math.abs(mouseX - iconPosition)
 
-    // Maximum scale and distance influence
-    const maxScale = 2
-    const maxDistance = iconWidth * 2.5
+    // Reduced maximum scale and distance influence
+    const maxScale = 1.7 // Reduced from 2 to 1.3
+    const maxDistance = iconWidth * 2.7
 
     // Calculate scale based on distance (closer = larger)
     if (distance > maxDistance) return 1

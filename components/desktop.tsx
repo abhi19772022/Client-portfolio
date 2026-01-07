@@ -407,7 +407,7 @@ export default function Desktop({
         </svg>
 
         {/* Single Sticky Note - Liquid Glass Theme */}
-        <div className="absolute top-6 left-6 z-10 hidden sm:block">
+        <div className="absolute top-24 left-6 z-10 hidden sm:block">
           <div 
             ref={stickyNoteRef}
             className={`relative rounded-2xl overflow-hidden transform hover:rotate-0 transition-all duration-300 ${
@@ -468,12 +468,11 @@ export default function Desktop({
                   ? 'text-white/95 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]' 
                   : 'text-gray-800/95 drop-shadow-[0_2px_4px_rgba(255,255,255,0.8)]'
               }`}>
-                <div>Video Editor & Creative</div>
-                <div>5+ Years Experience</div>
-                <div>DaVinci Resolve Expert</div>
-                <div>147 Projects Completed</div>
-                <div>Corporate & Brand Content</div>
-                <div>Social Media Specialist</div>
+                <div>Creative Video Editing and storytelling</div>
+                <div>3+ year Industry level experience</div>
+                <div>200+ Satisfied Videos delivered and counting</div>
+                <div>India's top 1% Editor</div>
+                <div>Worked with top creators and Industry leaders</div>
               </div>
             </div>
           </div>

@@ -49,9 +49,24 @@ interface WindowProps {
   onAppClick?: (app: any) => void
 }
 
-export default function Window({ window, isActive, onClose, onFocus, isDarkMode, onAppClick }: WindowProps) {
-  const [position, setPosition] = useState(window.position)
-  const [size, setSize] = useState(window.size)
+export default function Window({ window: windowProp, isActive, onClose, onFocus, isDarkMode, onAppClick }: WindowProps) {
+  // Center the window on initial load
+  const getCenteredPosition = () => {
+    if (typeof window === 'undefined') return windowProp.position
+    
+    const viewportWidth = window.innerWidth
+    const viewportHeight = window.innerHeight
+    const menuBarHeight = 26
+    const dockHeight = 70
+    
+    return {
+      x: (viewportWidth - windowProp.size.width) / 2,
+      y: ((viewportHeight - menuBarHeight - dockHeight) - windowProp.size.height) / 2 + menuBarHeight
+    }
+  }
+
+  const [position, setPosition] = useState(() => getCenteredPosition())
+  const [size, setSize] = useState(windowProp.size)
   const [isDragging, setIsDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [isZoomed, setIsZoomed] = useState(false)
@@ -63,7 +78,7 @@ export default function Window({ window, isActive, onClose, onFocus, isDarkMode,
 
   const windowRef = useRef<HTMLDivElement>(null)
 
-  const AppComponent = componentMap[window.component]
+  const AppComponent = componentMap[windowProp.component]
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -234,7 +249,7 @@ export default function Window({ window, isActive, onClose, onFocus, isDarkMode,
     >
       {/* Title bar */}
       <div 
-        className={`h-8 flex items-center px-3 ${titleBarClass}`} 
+        className={`h-8 flex items-center px-3 ${titleBarClass} cursor-grab active:cursor-grabbing`} 
         style={{
           background: isDarkMode ? 'rgba(31, 41, 55, 0.7)' : 'rgba(229, 231, 235, 0.7)',
           backdropFilter: 'blur(10px)',
@@ -263,7 +278,7 @@ export default function Window({ window, isActive, onClose, onFocus, isDarkMode,
           </button>
         </div>
 
-        <div className={`flex-1 text-center text-sm font-medium truncate ${textClass}`}>{window.title}</div>
+        <div className={`flex-1 text-center text-sm font-medium truncate ${textClass}`}>{windowProp.title}</div>
 
         <div className="w-16">{/* Spacer to balance the title */}</div>
       </div>

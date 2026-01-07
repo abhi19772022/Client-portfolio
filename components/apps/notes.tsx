@@ -57,7 +57,7 @@ export default function Notes({ isDarkMode = true }: NotesProps) {
       content: "full",
       date: "Jan 7, 2026",
       time: "10:30 AM",
-      tags: ["#portfolio", "#about"],
+      tags: ["#portfolio", "#personalbranding"],
       hasImage: true,
     },
     {
@@ -68,7 +68,7 @@ export default function Notes({ isDarkMode = true }: NotesProps) {
       content: "project1",
       date: "Jan 6, 2026",
       time: "3:45 PM",
-      tags: ["#corporate", "#inprogress"],
+      tags: ["#videoediting", "#cinematography"],
       hasImage: true,
     },
     {
@@ -79,7 +79,7 @@ export default function Notes({ isDarkMode = true }: NotesProps) {
       content: "project2",
       date: "Jan 5, 2026",
       time: "11:20 AM",
-      tags: ["#brand", "#commercial"],
+      tags: ["#brand", "#editing"],
       hasImage: false,
     },
     {
@@ -90,7 +90,7 @@ export default function Notes({ isDarkMode = true }: NotesProps) {
       content: "skills",
       date: "Jan 4, 2026",
       time: "9:15 AM",
-      tags: ["#skills", "#software"],
+      tags: ["#portfolio", "#editing"],
       hasImage: false,
     },
     {
@@ -101,7 +101,7 @@ export default function Notes({ isDarkMode = true }: NotesProps) {
       content: "project3",
       date: "Jan 3, 2026",
       time: "2:30 PM",
-      tags: ["#musicvideo", "#completed"],
+      tags: ["#cinematography", "#brand"],
       hasImage: true,
     },
   ]
@@ -155,21 +155,25 @@ export default function Notes({ isDarkMode = true }: NotesProps) {
 
               <h3 className="text-lg md:text-xl font-semibold text-gray-900 mt-4 md:mt-6 mb-3">What I Do</h3>
               <ul className="space-y-2 text-sm md:text-base text-gray-800 bg-white rounded-xl p-4 md:p-6 shadow-md border border-amber-100">
-                <li className="flex items-center gap-2">
-                  <Briefcase className="w-4 h-4 text-blue-600" />
-                  Corporate Videos & Training Content
+                <li className="flex items-start gap-2">
+                  <Briefcase className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
+                  <span><strong>Full-Cycle Post-Production:</strong> Taking your raw footage from "assembly" to a polished, high-impact final cut.</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <Clapperboard className="w-4 h-4 text-blue-600" />
-                  Brand Commercials & Product Videos
+                <li className="flex items-start gap-2">
+                  <Clapperboard className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
+                  <span><strong>Strategic Storytelling:</strong> Structuring content to capture attention in the first 3 seconds and maintain it until the CTA.</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <Smartphone className="w-4 h-4 text-purple-600" />
-                  Social Media Reels & Shorts
+                <li className="flex items-start gap-2">
+                  <Smartphone className="w-4 h-4 text-purple-600 mt-1 flex-shrink-0" />
+                  <span><strong>Precision Technical Grading:</strong> Professional color correction and audio mastering to ensure your brand looks and sounds premium.</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <Music className="w-4 h-4 text-green-600" />
-                  Music Videos & Creative Content
+                <li className="flex items-start gap-2">
+                  <Music className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
+                  <span><strong>Visual Rhythm:</strong> Expertly pacing cuts to match the mood, message, and music of your project.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Film className="w-4 h-4 text-amber-600 mt-1 flex-shrink-0" />
+                  <span><strong>Atmospheric Color & Sound:</strong> Using color science and soundscapes to immerse your audience in the story.</span>
                 </li>
               </ul>
 
@@ -179,21 +183,25 @@ export default function Notes({ isDarkMode = true }: NotesProps) {
                   Why Choose Me
                 </h3>
                 <ul className="space-y-2 text-gray-700 text-xs md:text-sm">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-600" />
-                    Quick turnaround without compromising quality
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span><strong>Efficiency First:</strong> I respect your deadlines. My workflow is optimized for speed without sacrificing creative quality.</span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-600" />
-                    Unlimited revisions until you're 100% satisfied
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span><strong>Brand Alignment:</strong> I don't just edit; I study your brand guidelines to ensure every frame feels like "you."</span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-600" />
-                    Professional color grading and sound design
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span><strong>Reliability:</strong> With 3 years of experience, I've seen every technical glitch imaginable—and I know how to fix them.</span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-600" />
-                    Multiple format delivery (YouTube, Instagram, etc.)
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span><strong>Clear Communication:</strong> No "editor ghosting." You get consistent updates and a streamlined revision process.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span><strong>Algorithm Aware:</strong> I understand what keeps people watching on modern platforms.</span>
                   </li>
                 </ul>
               </div>
@@ -545,13 +553,19 @@ export default function Notes({ isDarkMode = true }: NotesProps) {
               #portfolio
             </span>
             <span className="text-xs px-1.5 md:px-2 py-1 rounded-md bg-gray-200 text-gray-600 hover:bg-gray-300 cursor-pointer transition-colors">
-              #wedding
+              #cinematography
             </span>
             <span className="text-xs px-1.5 md:px-2 py-1 rounded-md bg-gray-200 text-gray-600 hover:bg-gray-300 cursor-pointer transition-colors">
               #brand
             </span>
             <span className="text-xs px-1.5 md:px-2 py-1 rounded-md bg-gray-200 text-gray-600 hover:bg-gray-300 cursor-pointer transition-colors">
-              #completed
+              #editing
+            </span>
+            <span className="text-xs px-1.5 md:px-2 py-1 rounded-md bg-gray-200 text-gray-600 hover:bg-gray-300 cursor-pointer transition-colors">
+              #videoediting
+            </span>
+            <span className="text-xs px-1.5 md:px-2 py-1 rounded-md bg-gray-200 text-gray-600 hover:bg-gray-300 cursor-pointer transition-colors">
+              #personalbranding
             </span>
           </div>
         </div>

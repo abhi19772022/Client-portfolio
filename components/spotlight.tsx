@@ -4,10 +4,10 @@ import { useState, useEffect, useRef } from "react"
 import type { AppWindow } from "@/types"
 
 const spotlightApps = [
-  { id: "imessage", title: "Messages", icon: "/messages.png", component: "IMessage" },
-  { id: "contact", title: "Contact", icon: "/mail.png", component: "Contact" },
+  { id: "imessage", title: "Messages", icon: "/imess.png", component: "IMessage" },
+  { id: "contact", title: "Contact", icon: "/contacts.png", component: "Contact" },
   { id: "photos", title: "Photos", icon: "/Photos.png", component: "Photos" },
-  { id: "testimonials", title: "Testimonials", icon: "/contacts.png", component: "Testimonials" },
+  { id: "testimonials", title: "Testimonials", icon: "/keynote.png", component: "Testimonials" },
   { id: "notes", title: "Notes", icon: "/notes.png", component: "Notes" },
   { id: "aftereffects", title: "After Effects", icon: "/after-effects.png", component: "AfterEffects" },
   { id: "premiere", title: "Premiere Pro", icon: "/premiere-pro.png", component: "Premiere" },
