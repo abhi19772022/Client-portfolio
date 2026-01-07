@@ -18,7 +18,6 @@ import Weather from "@/components/apps/weather"
 import Photos from "@/components/apps/photos"
 import Files from "@/components/apps/files"
 import DaVinci from "@/components/apps/davinci"
-import Music from "@/components/apps/music"
 import Testimonials from "@/components/apps/testimonials"
 import IMessage from "@/components/apps/imessage"
 
@@ -37,7 +36,6 @@ const componentMap: Record<string, React.ComponentType<{ isDarkMode?: boolean }>
   Photos,
   Files,
   DaVinci,
-  Music,
   Testimonials,
   IMessage,
 }

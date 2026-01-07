@@ -18,7 +18,6 @@ const dockApps = [
   { id: "davinci", title: "DaVinci Resolve", icon: "/icons8-davinci-resolve-48.png", component: "DaVinci" },
   { id: "terminal", title: "Terminal", icon: "/terminal.png", component: "Terminal" },
   { id: "files", title: "My Data", icon: "/files.png", component: "Files" },
-  { id: "music", title: "music", icon: "/music.png", component: "Music" },
 ]
 
 interface DockProps {

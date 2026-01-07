@@ -6,55 +6,99 @@ interface Message {
   id: string
   text: string
   sender: "user" | "ai"
-  type: "text" | "options" | "input"
+  type: "text" | "options" | "input" | "dual-input"
   options?: string[]
-  inputType?: "email" | "phone"
+  inputType?: "email" | "phone" | "text" | "number"
+  dualInput?: boolean
 }
 
 export default function IMessage({ isDarkMode }: { isDarkMode?: boolean }) {
   const [messages, setMessages] = useState<Message[]>([])
-  const [currentQuestion, setCurrentQuestion] = useState(0)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [isTyping, setIsTyping] = useState(false)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [inputValue, setInputValue] = useState("")
-  const [messageCounter, setMessageCounter] = useState(0)
+  const [inputValue2, setInputValue2] = useState("")
+  const messageCounterRef = useRef(0)
   const [initialized, setInitialized] = useState(false)
+  const initializingRef = useRef(false)
+  const [currentStep, setCurrentStep] = useState(0)
 
-  const questions = [
-    {
-      question: "Hi! 👋 Welcome to Himanshu's Video Editing Service! I'm here to help you get started. What type of video project do you need?",
-      options: ["Long Form Videos (YouTube, Documentaries)", "Short Form Videos (Reels, TikTok, Shorts)", "Both"],
-      key: "videoType"
-    },
-    {
-      question: "Great choice! What's the typical duration of your videos?",
-      options: ["Less than 1 minute", "1-5 minutes", "5-15 minutes", "More than 15 minutes"],
-      key: "duration"
-    },
-    {
-      question: "What style of editing are you looking for?",
-      options: ["Fast-paced with effects", "Cinematic & Professional", "Minimal & Clean", "Trending & Viral style"],
-      key: "editingStyle"
-    },
-    {
-      question: "How many videos do you need edited per month?",
-      options: ["1-5 videos", "5-10 videos", "10-20 videos", "20+ videos"],
-      key: "frequency"
-    },
-    {
-      question: "Perfect! What's your email address?",
-      type: "input",
-      inputType: "email",
-      key: "email"
-    },
-    {
-      question: "Great! And what's your contact number?",
-      type: "input",
-      inputType: "phone",
-      key: "phone"
+  const getNextQuestion = (step: number, currentAnswers: Record<string, string>) => {
+    switch(step) {
+      case 0:
+        return {
+          question: "Hi! 👋 Welcome to Himanshu's Video Editing Service! I'm here to help you get started. What type of video project do you need?",
+          options: ["Long Form", "Short Form", "Other"],
+          key: "videoType"
+        }
+      case 1:
+        // Only show this if Short Form was selected
+        if (currentAnswers.videoType === "Short Form") {
+          return {
+            question: "Great! Is it less than or more than 9 minutes?",
+            options: ["Less than 9 minute video", "More than 9 minute video"],
+            key: "shortFormDuration"
+          }
+        }
+        // Skip to next step if not Short Form
+        return getNextQuestion(2, currentAnswers)
+      case 2:
+        // Only show this if Long Form was selected
+        if (currentAnswers.videoType === "Long Form") {
+          return {
+            question: "What's the duration of your long form video?",
+            type: "input",
+            inputType: "text",
+            key: "longFormDuration"
+          }
+        }
+        // Skip to next step if not Long Form
+        return getNextQuestion(3, currentAnswers)
+      case 3:
+        return {
+          question: "Please share your reference video link or type your reference explanation:",
+          type: "dual-input",
+          key: "reference"
+        }
+      case 4:
+        return {
+          question: "How many videos do you need?",
+          type: "input",
+          inputType: "number",
+          key: "videoCount"
+        }
+      case 5:
+        return {
+          question: "How would you like to work with us?",
+          options: ["Freelance Work", "Monthly Hire"],
+          key: "workType"
+        }
+      case 6:
+        return {
+          question: "Perfect! What's your name?",
+          type: "input",
+          inputType: "text",
+          key: "name"
+        }
+      case 7:
+        return {
+          question: "Great! What's your email address?",
+          type: "input",
+          inputType: "email",
+          key: "email"
+        }
+      case 8:
+        return {
+          question: "And finally, what's your phone number?",
+          type: "input",
+          inputType: "phone",
+          key: "phone"
+        }
+      default:
+        return null
     }
-  ]
+  }
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -66,21 +110,25 @@ export default function IMessage({ isDarkMode }: { isDarkMode?: boolean }) {
 
   useEffect(() => {
     // Initial welcome message - only run once
-    if (!initialized) {
+    if (!initialized && !initializingRef.current) {
+      initializingRef.current = true
       setTimeout(() => {
-        addAIMessage(questions[0].question, questions[0].options)
+        const firstQuestion = getNextQuestion(0, {})
+        if (firstQuestion) {
+          addAIMessage(firstQuestion.question, firstQuestion.options, firstQuestion.type === "input" ? firstQuestion.inputType : undefined, firstQuestion.type === "dual-input")
+        }
         setInitialized(true)
       }, 500)
     }
   }, [initialized])
 
   const getUniqueId = () => {
-    const id = `${Date.now()}-${messageCounter}`
-    setMessageCounter(prev => prev + 1)
+    const id = `${Date.now()}-${messageCounterRef.current}-${Math.random().toString(36).substr(2, 9)}`
+    messageCounterRef.current += 1
     return id
   }
 
-  const addAIMessage = (text: string, options?: string[], inputType?: "email" | "phone") => {
+  const addAIMessage = (text: string, options?: string[], inputType?: "email" | "phone" | "text" | "number", isDualInput?: boolean) => {
     setIsTyping(true)
     setTimeout(() => {
       setIsTyping(false)
@@ -88,9 +136,10 @@ export default function IMessage({ isDarkMode }: { isDarkMode?: boolean }) {
         id: getUniqueId(),
         text,
         sender: "ai",
-        type: inputType ? "input" : options ? "options" : "text",
+        type: isDualInput ? "dual-input" : inputType ? "input" : options ? "options" : "text",
         options,
-        inputType
+        inputType,
+        dualInput: isDualInput
       }])
     }, 1000)
   }
@@ -108,21 +157,27 @@ export default function IMessage({ isDarkMode }: { isDarkMode?: boolean }) {
     // Add user's choice
     addUserMessage(option)
 
-    // Save answer
-    const newAnswers = { ...answers, [questions[currentQuestion].key]: option }
+    // Save answer with current question key
+    const currentQuestion = getNextQuestion(currentStep, answers)
+    if (!currentQuestion) return
+
+    const newAnswers = { ...answers, [currentQuestion.key]: option }
     setAnswers(newAnswers)
 
-    // Move to next question
-    const nextQuestion = currentQuestion + 1
+    // Move to next step
+    const nextStep = currentStep + 1
+    setCurrentStep(nextStep)
     
-    if (nextQuestion < questions.length) {
-      setCurrentQuestion(nextQuestion)
-      const nextQ = questions[nextQuestion]
+    const nextQuestion = getNextQuestion(nextStep, newAnswers)
+    
+    if (nextQuestion) {
       setTimeout(() => {
-        if (nextQ.type === "input") {
-          addAIMessage(nextQ.question, undefined, nextQ.inputType)
+        if (nextQuestion.type === "input") {
+          addAIMessage(nextQuestion.question, undefined, nextQuestion.inputType)
+        } else if (nextQuestion.type === "dual-input") {
+          addAIMessage(nextQuestion.question, undefined, undefined, true)
         } else {
-          addAIMessage(nextQ.question, nextQ.options)
+          addAIMessage(nextQuestion.question, nextQuestion.options)
         }
       }, 1500)
     } else {
@@ -130,28 +185,43 @@ export default function IMessage({ isDarkMode }: { isDarkMode?: boolean }) {
     }
   }
 
-  const handleInputSubmit = (value: string) => {
-    if (!value.trim()) return
+  const handleInputSubmit = (value: string, value2?: string) => {
+    if (!value.trim() && !value2?.trim()) return
 
     // Add user's input
-    addUserMessage(value)
+    if (value2) {
+      addUserMessage(value || value2)
+    } else {
+      addUserMessage(value)
+    }
     setInputValue("")
+    setInputValue2("")
 
     // Save answer
-    const newAnswers = { ...answers, [questions[currentQuestion].key]: value }
+    const currentQuestion = getNextQuestion(currentStep, answers)
+    if (!currentQuestion) return
+
+    const newAnswers = { 
+      ...answers, 
+      [currentQuestion.key]: value2 ? (value || value2) : value,
+      ...(value2 && value ? { [`${currentQuestion.key}_link`]: value, [`${currentQuestion.key}_text`]: value2 } : {})
+    }
     setAnswers(newAnswers)
 
-    // Move to next question
-    const nextQuestion = currentQuestion + 1
+    // Move to next step
+    const nextStep = currentStep + 1
+    setCurrentStep(nextStep)
     
-    if (nextQuestion < questions.length) {
-      setCurrentQuestion(nextQuestion)
-      const nextQ = questions[nextQuestion]
+    const nextQuestion = getNextQuestion(nextStep, newAnswers)
+    
+    if (nextQuestion) {
       setTimeout(() => {
-        if (nextQ.type === "input") {
-          addAIMessage(nextQ.question, undefined, nextQ.inputType)
+        if (nextQuestion.type === "input") {
+          addAIMessage(nextQuestion.question, undefined, nextQuestion.inputType)
+        } else if (nextQuestion.type === "dual-input") {
+          addAIMessage(nextQuestion.question, undefined, undefined, true)
         } else {
-          addAIMessage(nextQ.question, nextQ.options)
+          addAIMessage(nextQuestion.question, nextQuestion.options)
         }
       }, 1500)
     } else {
@@ -166,28 +236,37 @@ export default function IMessage({ isDarkMode }: { isDarkMode?: boolean }) {
     }, 1500)
 
     // Send data to email
-    try {
-      await fetch('/api/send-inquiry', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          to: 'abhimishra.db12@gmail.com',
-          data: finalAnswers
+    setTimeout(async () => {
+      try {
+        const response = await fetch('/api/send-inquiry', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            to: 'himanshu020104@gmail.com',
+            data: finalAnswers
+          })
         })
-      })
-    } catch (error) {
-      console.error('Error sending email:', error)
-    }
-    
-    setTimeout(() => {
-      addAIMessage("📩 Notification sent to Himanshu! He will connect with you soon to discuss your project in detail.")
-    }, 3000)
-    
-    setTimeout(() => {
-      addAIMessage("Thank you for choosing Himanshu's Video Editing Service! Have a great day! ✨")
-    }, 4500)
+
+        const result = await response.json()
+        
+        if (result.success) {
+          console.log('✅ Email sent successfully:', result)
+          addAIMessage("📩 Notification sent to Himanshu! He will connect with you soon to discuss your project in detail.")
+          
+          setTimeout(() => {
+            addAIMessage("Thank you for choosing Himanshu's Video Editing Service! Have a great day! ✨")
+          }, 1500)
+        } else {
+          console.error('❌ Email failed:', result)
+          addAIMessage("⚠️ There was an issue sending the notification, but your information has been recorded. Himanshu will reach out to you soon!")
+        }
+      } catch (error) {
+        console.error('❌ Network error:', error)
+        addAIMessage("⚠️ Network error occurred. Please try again or contact directly at himanshu020104@gmail.com")
+      }
+    }, 2000)
   }
 
   return (
@@ -227,6 +306,56 @@ export default function IMessage({ isDarkMode }: { isDarkMode?: boolean }) {
                 >
                   <p className="text-sm leading-relaxed">{message.text}</p>
                 </div>
+              ) : message.type === "dual-input" ? (
+                <div className="space-y-2">
+                  <div
+                    className={`rounded-2xl px-4 py-2 rounded-bl-md ${
+                      isDarkMode ? "bg-gray-700 text-white" : "bg-gray-200 text-gray-900"
+                    }`}
+                  >
+                    <p className="text-sm leading-relaxed">{message.text}</p>
+                  </div>
+                  <div className="mt-3 space-y-3">
+                    {/* macOS Glossy Input Field 1 */}
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        placeholder="Paste reference video link here..."
+                        className={`w-full px-4 py-3 rounded-xl text-sm font-medium transition-all
+                          ${isDarkMode
+                            ? "bg-gradient-to-b from-gray-800/90 to-gray-800/50 text-white placeholder-gray-400 border border-gray-700/50 shadow-inner backdrop-blur-xl focus:from-gray-700/90 focus:to-gray-700/50 focus:border-blue-500/50 focus:shadow-blue-500/20"
+                            : "bg-gradient-to-b from-white/90 to-gray-50/90 text-gray-900 placeholder-gray-400 border border-gray-300/50 shadow-lg backdrop-blur-xl focus:from-white focus:to-white focus:border-blue-400/60 focus:shadow-blue-400/30"
+                          } focus:outline-none focus:ring-2 focus:ring-blue-500/30`}
+                      />
+                    </div>
+                    
+                    <div className="text-center text-xs font-medium text-gray-400">OR</div>
+                    
+                    {/* macOS Glossy Input Field 2 */}
+                    <div className="relative">
+                      <textarea
+                        value={inputValue2}
+                        onChange={(e) => setInputValue2(e.target.value)}
+                        placeholder="Type or explain your reference here..."
+                        rows={3}
+                        className={`w-full px-4 py-3 rounded-xl text-sm font-medium transition-all resize-none
+                          ${isDarkMode
+                            ? "bg-gradient-to-b from-gray-800/90 to-gray-800/50 text-white placeholder-gray-400 border border-gray-700/50 shadow-inner backdrop-blur-xl focus:from-gray-700/90 focus:to-gray-700/50 focus:border-blue-500/50 focus:shadow-blue-500/20"
+                            : "bg-gradient-to-b from-white/90 to-gray-50/90 text-gray-900 placeholder-gray-400 border border-gray-300/50 shadow-lg backdrop-blur-xl focus:from-white focus:to-white focus:border-blue-400/60 focus:shadow-blue-400/30"
+                          } focus:outline-none focus:ring-2 focus:ring-blue-500/30`}
+                      />
+                    </div>
+                    
+                    <button
+                      onClick={() => handleInputSubmit(inputValue, inputValue2)}
+                      className="mt-2 w-full px-4 py-3 rounded-xl text-sm font-semibold bg-gradient-to-b from-[#0B84FE] to-[#0A75E3] text-white hover:from-[#0A75E3] hover:to-[#0966CC] transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </div>
               ) : message.type === "input" ? (
                 <div className="space-y-2">
                   <div
@@ -236,9 +365,14 @@ export default function IMessage({ isDarkMode }: { isDarkMode?: boolean }) {
                   >
                     <p className="text-sm leading-relaxed">{message.text}</p>
                   </div>
-                  <div className="mt-2">
+                  <div className="mt-3">
+                    {/* macOS Glossy Input Field */}
                     <input
-                      type={message.inputType === "email" ? "email" : "tel"}
+                      type={
+                        message.inputType === "email" ? "email" : 
+                        message.inputType === "phone" ? "tel" : 
+                        message.inputType === "number" ? "number" : "text"
+                      }
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
                       onKeyPress={(e) => {
@@ -246,16 +380,20 @@ export default function IMessage({ isDarkMode }: { isDarkMode?: boolean }) {
                           handleInputSubmit(inputValue)
                         }
                       }}
-                      placeholder={message.inputType === "email" ? "your@email.com" : "+1 234 567 8900"}
-                      className={`w-full px-4 py-2.5 rounded-xl text-sm font-medium ${
-                        isDarkMode
-                          ? "bg-gray-800 text-white border border-gray-600"
-                          : "bg-white text-gray-900 border border-gray-300"
-                      }`}
+                      placeholder={
+                        message.inputType === "email" ? "your@email.com" : 
+                        message.inputType === "phone" ? "+1 234 567 8900" :
+                        message.inputType === "number" ? "Enter number..." : "Type here..."
+                      }
+                      className={`w-full px-4 py-3 rounded-xl text-sm font-medium transition-all
+                        ${isDarkMode
+                          ? "bg-gradient-to-b from-gray-800/90 to-gray-800/50 text-white placeholder-gray-400 border border-gray-700/50 shadow-inner backdrop-blur-xl focus:from-gray-700/90 focus:to-gray-700/50 focus:border-blue-500/50 focus:shadow-blue-500/20"
+                          : "bg-gradient-to-b from-white/90 to-gray-50/90 text-gray-900 placeholder-gray-400 border border-gray-300/50 shadow-lg backdrop-blur-xl focus:from-white focus:to-white focus:border-blue-400/60 focus:shadow-blue-400/30"
+                        } focus:outline-none focus:ring-2 focus:ring-blue-500/30`}
                     />
                     <button
                       onClick={() => handleInputSubmit(inputValue)}
-                      className="mt-2 w-full px-4 py-2.5 rounded-xl text-sm font-medium bg-[#0B84FE] text-white hover:bg-[#0A75E3] transition-colors"
+                      className="mt-3 w-full px-4 py-3 rounded-xl text-sm font-semibold bg-gradient-to-b from-[#0B84FE] to-[#0A75E3] text-white hover:from-[#0A75E3] hover:to-[#0966CC] transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
                     >
                       Submit
                     </button>
@@ -270,16 +408,16 @@ export default function IMessage({ isDarkMode }: { isDarkMode?: boolean }) {
                   >
                     <p className="text-sm leading-relaxed">{message.text}</p>
                   </div>
-                  <div className="space-y-2 mt-2">
+                  <div className="space-y-2.5 mt-3">
                     {message.options?.map((option, index) => (
                       <button
-                        key={index}
+                        key={`${message.id}-${index}`}
                         onClick={() => handleOptionClick(option)}
-                        className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all hover:scale-[1.02] ${
-                          isDarkMode
-                            ? "bg-gray-800 text-white hover:bg-gray-700 border border-gray-600"
-                            : "bg-white text-gray-900 hover:bg-gray-50 border border-gray-300"
-                        } shadow-sm`}
+                        className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all hover:scale-[1.02] active:scale-[0.98]
+                          ${isDarkMode
+                            ? "bg-gradient-to-b from-gray-800/90 to-gray-800/50 text-white hover:from-gray-700/90 hover:to-gray-700/50 border border-gray-700/50 shadow-lg backdrop-blur-xl"
+                            : "bg-gradient-to-b from-white/90 to-gray-50/90 text-gray-900 hover:from-white hover:to-white border border-gray-300/50 shadow-lg backdrop-blur-xl hover:shadow-xl"
+                        }`}
                       >
                         {option}
                       </button>

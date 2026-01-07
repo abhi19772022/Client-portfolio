@@ -4,105 +4,130 @@ import { AnimatedTestimonials } from "@/components/ui/animated-testimonials"
 
 export default function Testimonials({ isDarkMode }: { isDarkMode?: boolean }) {
   const testimonials = [
+    
+  {
+    "quote": "The Journey Club breaks down the creator economy in a way that actually makes execution possible. No fluff, just systems that work.",
+    "name": "The Journey Club",
+    "designation": "Creator Economy Community",
+    "src": "/testimonials/testimonial-1.png"
+  },
+  {
+    "quote": "Everything I do is a/b testing, and the frameworks here align perfectly with how real operators think and execute.",
+    "name": "Sagnik Ghosh",
+    "designation": "Investor & Entrepreneur",
+    "src": "/testimonials/testimonial-2.png"
+  },
+  {
+    "quote": "What stood out was the clarity. Monetization, distribution, and leverage explained without fake hype.",
+    "name": "Jatin Naran",
+    "designation": "Digital Creator",
+    "src": "/testimonials/testimonial-3.png"
+  },
+  {
+    "quote": "If you're not building with AI today, you're already behind. This ecosystem understands that reality deeply.",
+    "name": "Serge Gatari",
+    "designation": "AI Growth & Product Builder",
+    "src": "/testimonials/testimonial-4.png"
+  },
+  {
+    "quote": "Reels are about psychology, not luck. The strategies here respect attention, timing, and repeatability.",
+    "name": "Parth Vijayvergiya",
+    "designation": "Content & Reel Creator",
+    "src": "/testimonials/testimonial-5.png"
+  },
+  {
+    "quote": "Most platforms teach theory. This actually sharpens execution, especially for creators who want consistency.",
+    "name": "Stephen Ridley",
+    "designation": "Artist & Educator",
+    "src": "/testimonials/testimonial-6.png"
+  },
+  {
+    "quote": "Audience growth is engineering, not magic. The thinking here matches how modern creators should build.",
+    "name": "Stephen Ridley",
+    "designation": "Founder, Ridley Academy",
+    "src": "/testimonials/testimonial-7.png"
+  },
+  {
+    "quote": "AI is a leverage multiplier. What matters is how you deploy it, and this approach gets that right.",
+    "name": "Serge Gatari",
+    "designation": "Founder, CookAI",
+    "src": "/testimonials/testimonial-8.png"
+  },
+  {
+    "quote": "Consistency beats virality. The systems focus here help creators stay in the game long enough to win.",
+    "name": "Parth Vijayvergiya",
+    "designation": "YouTube Creator",
+    "src": "/testimonials/testimonial-9.png"
+  },
+  {
+    "quote": "Online income isn’t about hacks. It’s about repeatable funnels and trust, and that’s exactly what’s taught.",
+    "name": "Jatz Naran",
+    "designation": "Online Business Educator",
+    "src": "/testimonials/testimonial-10.png"
+  },
     {
-      quote:
-        "Exceptional video editor! Himanshu delivered outstanding content for our community events. His creativity brought our vision to life perfectly.",
-      name: "The Journey Club",
-      designation: "Creator Economy Community - 6,155 followers",
-      src: "/testimonials/testimonial-1.png",
-    },
-    {
-      quote:
-        "Working with Himanshu was a game-changer. His editing skills elevated our content quality and helped us reach new audiences.",
-      name: "Sagnik Ghosh",
-      designation: "Entrepreneur & Investor - 15.4K followers",
-      src: "/testimonials/testimonial-2.png",
-    },
-    {
-      quote:
-        "Himanshu's expertise in video editing is remarkable. He helped us generate 7-figure results with compelling visual storytelling.",
-      name: "Jatin Naran",
-      designation: "Digital Creator - 241K followers",
-      src: "/testimonials/testimonial-3.png",
-    },                    
-    {
-      quote:
-        "His attention to detail and creative vision transformed our AI content. Professional work that exceeded expectations every time.",
-      name: "Serge Gatari",
-      designation: "AI Builder & Content Creator - 67.1K followers",
-      src: "/testimonials/testimonial-4.png",
-    },
-    {
-      quote:
-        "Incredible editing quality! Himanshu helped create engaging reels that resonated with our 214K followers. Highly recommended!",
-      name: "Parth Vijayvergiya",
-      designation: "Reel Creator - 214K followers",
-      src: "/testimonials/testimonial-5.png",
-    },
-    {
-      quote:
-        "As a British artist, finding quality video editors is crucial. Himanshu delivered exceptional work for our academy's promotional content.",
-      name: "Stephen Ridley",
-      designation: "British Artist & Founder - 526K followers",
-      src: "/testimonials/testimonial-6.png",
-    },
-    {
-      quote:
-        "Clear vision meets expert execution! Himanshu's editing brought clarity to our educational content and enhanced viewer engagement significantly.",
-      name: "Tharun Naik",
-      designation: "IIT Kharagpur '23 & Founder - 258K followers",
-      src: "/testimonials/testimonial-7.png",
-    },
-    {
-      quote:
-        "Outstanding work for our community events! Himanshu's editing captured the essence of our developer meetups perfectly.",
-      name: "GDG Chandigarh",
-      designation: "Google Developer Groups - 1,376 followers",
-      src: "/testimonials/testimonial-8.png",
-    },
-    {
-      quote:
-        "Professional and dedicated! Himanshu helped us create engaging AI content that resonated with our growing community.",
-      name: "AI Community Delhi",
-      designation: "AI Community - 233 followers",
-      src: "/testimonials/testimonial-9.png",
-    },
-    {
-      quote:
-        "Exceptional editing for our D4 Community content. Himanshu understood our vision and delivered beyond expectations.",
-      name: "D4 Community",
-      designation: "Discite Develop Debug Deploy - 371 followers",
-      src: "/testimonials/testimonial-10.png",
-    },
-    {
-      quote:
-        "Empowering content through great editing! Himanshu's work helped showcase our community events to 19.8K followers effectively.",
-      name: "GDG India",
-      designation: "Google Developer Groups India - 19.8K followers",
-      src: "/testimonials/testimonial-11.png",
-    },
-    {
-      quote:
-        "High-quality video editing for our machine learning events. Himanshu captured the technical excellence of our community perfectly.",
-      name: "ML Chandigarh",
-      designation: "ML Community by Google - 265 followers",
-      src: "/testimonials/testimonial-12.png",
-    },
-    {
-      quote:
-        "Partnership success! Himanshu's video editing helped us present our AI solutions with clarity and professional appeal.",
-      name: "LLMware.ai",
-      designation: "AI Technology Company",
-      src: "/testimonials/testimonial-13.png",
-    },
-    {
-      quote:
-        "Real, bold & unscripted content made better! Himanshu's editing enhanced our podcast quality and viewer engagement tremendously.",
-      name: "GUESSS India Podcast",
-      designation: "Student Entrepreneurship Podcast - 470 subscribers",
-      src: "/testimonials/testimonial-14.png",
-    },
-  ]
+    "quote": "Clear thinking beats loud motivation. This ecosystem values depth, not noise.",
+    "name": "Tharun Speaks",
+    "designation": "Educator & Content Creator",
+    "src": "/testimonials/testimonial-11.png"
+  },
+  {
+    "quote": "Skill-first education is the only thing that compounds long-term. This aligns with that philosophy.",
+    "name": "Tharun Naik",
+    "designation": "Founder, Indian Video School",
+    "src": "/testimonials/testimonial-12.png"
+  },
+  {
+    "quote": "Strong communities are built by developers who share, not gatekeep. This does that well.",
+    "name": "GDG Chandigarh",
+    "designation": "Developer Community",
+    "src": "/testimonials/testimonial-13.png"
+  },
+  {
+    "quote": "AI progress accelerates when communities collaborate instead of competing.",
+    "name": "AI Community Delhi",
+    "designation": "AI & Tech Community",
+    "src": "/testimonials/testimonial-14.png"
+  },
+  {
+    "quote": "Building, debugging, and deploying in public is how real engineers grow.",
+    "name": "D4 Community",
+    "designation": "Developer Community",
+    "src": "/testimonials/testimonial-16.png"
+  },
+  {
+    "quote": "India’s developer ecosystem grows fastest when learning stays open and accessible.",
+    "name": "GDG India",
+    "designation": "Google Developer Community",
+    "src": "/testimonials/testimonial-17.png"
+  },
+  {
+    "quote": "Hands-on learning matters more than certificates. Community-driven ML education wins.",
+    "name": "ML Chandigarh",
+    "designation": "Machine Learning Community",
+    "src": "/testimonials/testimonial-18.png"
+  },
+  {
+    "quote": "Student entrepreneurship starts with honest conversations, not polished success stories.",
+    "name": "GUESSs India Podcast",
+    "designation": "Entrepreneurship Podcast",
+    "src": "/testimonials/testimonial-20.png"
+  },
+  {
+    "quote": "Entrepreneurship education works best when students learn by doing, not just listening.",
+    "name": "GUESSs India",
+    "designation": "Student Entrepreneurship Community",
+    "src": "/testimonials/testimonial-21.png"
+  },
+  {
+    "quote": "Real, unscripted conversations are what actually shape young founders.",
+    "name": "GUESSs India Podcast",
+    "designation": "Student Founder Podcast",
+    "src": "/testimonials/testimonial-22.png"
+  }
+]
+
+  
 
   return (
     <div className={`h-full w-full overflow-auto ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
