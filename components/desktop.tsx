@@ -468,11 +468,26 @@ export default function Desktop({
                   ? 'text-white/95 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]' 
                   : 'text-gray-800/95 drop-shadow-[0_2px_4px_rgba(255,255,255,0.8)]'
               }`}>
-                <div>Creative Video Editing and storytelling</div>
-                <div>3+ year Industry level experience</div>
-                <div>200+ Satisfied Videos delivered and counting</div>
-                <div>India's top 1% Editor</div>
-                <div>Worked with top creators and Industry leaders</div>
+                <div className="flex items-start gap-2">
+                  <span className="mt-1">•</span>
+                  <span>Creative Video Editing and storytelling</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="mt-1">•</span>
+                  <span>3+ year Industry level experience</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="mt-1">•</span>
+                  <span>200+ Satisfied Videos delivered and counting</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="mt-1">•</span>
+                  <span>India's top 1% Editor</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="mt-1">•</span>
+                  <span>Worked with top creators and Industry leaders</span>
+                </div>
               </div>
             </div>
           </div>
