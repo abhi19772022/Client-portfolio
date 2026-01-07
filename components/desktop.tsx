@@ -58,7 +58,7 @@ export default function Desktop({
   const stickyNoteRef = useRef<HTMLDivElement>(null)
   const [isExpanded, setIsExpanded] = useState(false)
   const [iconPositions, setIconPositions] = useState({
-    aboutMe: { x: 32, y: 260 }, // left-8 (32px), moved further down to y: 260px
+    aboutMe: { x: 32, y: 350 }, // left-8 (32px), moved further down to y: 260px
     longForm: { x: window.innerWidth * 0.78, y: 128 }, // right-[22%] (78%), top-32 (128px)
     shortForm: { x: window.innerWidth * 0.92, y: window.innerHeight * 0.45 }, // right-[8%], top-[45%]
   })
@@ -407,7 +407,7 @@ export default function Desktop({
         </svg>
 
         {/* Single Sticky Note - Liquid Glass Theme */}
-        <div className="absolute top-24 left-6 z-10 hidden sm:block">
+        <div className="absolute top-10 left-6 z-10 hidden sm:block">
           <div 
             ref={stickyNoteRef}
             className={`relative rounded-2xl overflow-hidden transform hover:rotate-0 transition-all duration-300 ${
